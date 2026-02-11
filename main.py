@@ -9,9 +9,9 @@ import feedparser
 import google.generativeai as genai
 
 # --- 1. CONFIGURATION ---
-GITHUB_PROFILE = "https://github.com/merv3guler"
+GITHUB_REPO = "https://github.com/merv3guler/cyber-news-feed"
 DATA_FILE = "data/articles.json"
-MAX_HISTORY = 500  # Keep last 500 articles to prevent large file size
+MAX_HISTORY = 600  # Arşiv kapasitesi
 
 RSS_FEEDS = [
     "https://feeds.feedburner.com/TheHackersNews",
@@ -27,7 +27,7 @@ RSS_FEEDS = [
     "https://threatpost.com/feed/"
 ]
 
-# Keywords to map sources to categories
+# Kaynakları Kategorilere Ayırma Haritası
 CATEGORY_MAP = {
     "News": ["Hacker News", "Bleeping", "Register", "Dark Reading", "Threatpost"],
     "Alerts": ["CISA", "SANS", "CERT", "Advisory"],
@@ -81,9 +81,10 @@ HTML_TEMPLATE = """
             margin: 0;
             padding: 0;
             transition: background-color 0.3s, color 0.3s;
+            display: flex; flex-direction: column; min-height: 100vh;
         }
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; flex: 1; width: 100%; }
 
         /* HEADER */
         header {
@@ -98,6 +99,7 @@ HTML_TEMPLATE = """
         .icon-btn {
             background: none; border: 1px solid var(--border); color: var(--text-main);
             padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 1.1rem; transition: all 0.2s;
+            text-decoration: none; display: flex; align-items: center; justify-content: center;
         }
         .icon-btn:hover { border-color: var(--accent); color: var(--accent); }
         .fa-sun { color: var(--sun-color); filter: drop-shadow(0 0 3px var(--sun-color)); }
@@ -105,56 +107,70 @@ HTML_TEMPLATE = """
         /* FILTERS */
         .controls-bar { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; }
         .filter-group { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-        .filter-label { font-size: 0.8rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+        .filter-label { font-size: 0.8rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; font-weight: bold; }
         
         .filter-btn {
             background-color: var(--card-bg); border: 1px solid var(--border); color: var(--text-muted);
-            padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: 0.2s;
+            padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: 0.2s;
         }
         .filter-btn:hover, .filter-btn.active { background-color: var(--accent); color: #000; border-color: var(--accent); }
         .filter-btn.zeroday-btn { border-color: var(--danger); color: var(--danger); }
         .filter-btn.zeroday-btn:hover, .filter-btn.zeroday-btn.active { background-color: var(--danger); color: #fff; }
 
-        /* GRID */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; }
+        /* LIST LAYOUT (RECTANGULAR CARDS) */
+        .grid { display: flex; flex-direction: column; gap: 20px; }
         
         .card {
-            background-color: var(--card-bg); border: 1px solid var(--border); border-radius: 8px;
+            background-color: var(--card-bg); border: 1px solid var(--border); border-radius: 6px;
             padding: 20px; display: flex; flex-direction: column; position: relative;
-            transition: transform 0.2s; overflow: hidden; border-top: 3px solid transparent;
+            transition: transform 0.2s; overflow: hidden; border-left: 4px solid transparent;
+            /* Rectangle styling */
+            min-height: auto;
         }
-        .card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); border-color: var(--accent); }
+        .card:hover { transform: translateX(5px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); border-color: var(--accent); }
         
-        /* Category Borders */
-        .card[data-category="News"] { border-top-color: var(--cat-news); }
-        .card[data-category="Alerts"] { border-top-color: var(--cat-alerts); }
-        .card[data-category="Research"] { border-top-color: var(--cat-research); }
-        .card[data-category="Vulns"] { border-top-color: var(--cat-vulns); }
+        /* Category Borders (Left Side) */
+        .card[data-category="News"] { border-left-color: var(--cat-news); }
+        .card[data-category="Alerts"] { border-left-color: var(--cat-alerts); }
+        .card[data-category="Research"] { border-left-color: var(--cat-research); }
+        .card[data-category="Vulns"] { border-left-color: var(--cat-vulns); }
 
         .zeroday-banner {
             background-color: var(--danger); color: #fff; font-size: 0.7rem; font-weight: bold;
             padding: 4px 8px; position: absolute; top: 0; right: 0;
-            border-bottom-left-radius: 8px; animation: pulse 1.5s infinite;
+            border-bottom-left-radius: 6px; animation: pulse 1.5s infinite;
         }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
 
-        .meta { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.75rem; font-family: 'JetBrains Mono'; }
-        .category-badge { font-weight: bold; text-transform: uppercase; }
+        .meta { display: flex; gap: 15px; margin-bottom: 8px; font-size: 0.75rem; font-family: 'JetBrains Mono'; align-items: center;}
+        .category-badge { font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
+        .date-badge { color: var(--text-muted); }
         
-        h2 { font-size: 1.1rem; margin: 0 0 10px 0; line-height: 1.4; }
+        h2 { font-size: 1.2rem; margin: 0 0 10px 0; line-height: 1.3; }
         h2 a { color: var(--text-main); text-decoration: none; }
-        h2 a:hover { color: var(--accent); }
+        h2 a:hover { color: var(--accent); text-decoration: underline; }
         
-        .summary { font-size: 0.9rem; line-height: 1.5; color: var(--text-muted); margin-bottom: 20px; flex-grow: 1; }
+        .summary { font-size: 0.95rem; line-height: 1.6; color: var(--text-muted); margin-bottom: 15px; }
 
         .card-footer {
-            border-top: 1px solid var(--border); padding-top: 15px;
+            border-top: 1px solid var(--border); padding-top: 12px;
             display: flex; justify-content: space-between; align-items: center;
         }
         .share-links { display: flex; gap: 15px; }
         .share-icon { color: var(--text-muted); font-size: 1.1rem; transition: 0.2s; }
         .share-icon:hover { color: var(--accent); transform: scale(1.1); }
+        .share-icon:hover .fa-x-twitter { color: var(--text-main); }
         
+        /* PAGINATION */
+        .pagination { display: flex; justify-content: center; gap: 10px; margin-top: 40px; }
+        .page-btn {
+            background: var(--card-bg); border: 1px solid var(--border); color: var(--text-main);
+            padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold;
+        }
+        .page-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .page-btn:disabled { opacity: 0.5; cursor: not-allowed; border-color: var(--border); color: var(--text-muted); }
+        .page-info { align-self: center; font-family: 'JetBrains Mono'; font-size: 0.9rem; }
+
         footer { margin-top: 50px; text-align: center; color: var(--text-muted); font-size: 0.85rem; padding-bottom: 20px; }
         .heart { color: #ff003c; animation: beat 1s infinite alternate; display: inline-block; }
         @keyframes beat { to { transform: scale(1.1); } }
@@ -173,25 +189,25 @@ HTML_TEMPLATE = """
         <div>
             <h1>/// CYBER_INTEL_FEED</h1>
             <small style="font-family: 'JetBrains Mono'; color: var(--text-muted);">
-                System Status: <span style="color:var(--accent)">ONLINE</span> | {{ last_updated }}
+                Status: <span style="color:var(--accent)">ONLINE</span> | {{ last_updated }}
             </small>
         </div>
         <div class="header-controls">
             <button class="icon-btn" id="themeToggle"><i class="fas fa-sun"></i></button>
-            <a href="{{ github_profile }}" target="_blank" class="icon-btn"><i class="fab fa-github"></i></a>
+            <a href="{{ github_repo }}" target="_blank" class="icon-btn" title="Go to Repo"><i class="fab fa-github"></i></a>
         </div>
     </header>
 
     <div class="controls-bar">
         <div class="filter-group">
             <span class="filter-label">CATEGORIES:</span>
-            <button class="filter-btn active" onclick="filterNews('all')">ALL</button>
-            <button class="filter-btn zeroday-btn" onclick="filterNews('zeroday')">ZERO DAY</button>
-            <button class="filter-btn" onclick="filterNews('News')">NEWS</button>
-            <button class="filter-btn" onclick="filterNews('Alerts')">ALERTS</button>
-            <button class="filter-btn" onclick="filterNews('Research')">RESEARCH</button>
+            <button class="filter-btn active" onclick="applyFilter('all')">ALL</button>
+            <button class="filter-btn zeroday-btn" onclick="applyFilter('zeroday')">ZERO DAY</button>
+            <button class="filter-btn" onclick="applyFilter('News')">NEWS</button>
+            <button class="filter-btn" onclick="applyFilter('Alerts')">ALERTS</button>
+            <button class="filter-btn" onclick="applyFilter('Research')">RESEARCH</button>
         </div>
-        <div style="display:flex; justify-content:space-between; width:100%;">
+        <div style="display:flex; justify-content:space-between; width:100%; flex-wrap: wrap; gap:10px;">
             <div class="filter-group" id="sourceFilterContainer">
                 <span class="filter-label">SOURCES:</span>
                 </div>
@@ -210,13 +226,13 @@ HTML_TEMPLATE = """
             
             <div class="meta">
                 <span class="category-badge" style="color: var(--cat-{{ item.category | lower }})">{{ item.category }}</span>
-                <span>{{ item.date }}</span>
+                <span class="date-badge"> | {{ item.date }}</span>
             </div>
             <h2><a href="{{ item.link }}" target="_blank">{{ item.title }}</a></h2>
             <div class="summary">{{ item.summary | safe }}</div>
 
             <div class="card-footer">
-                <span style="font-size:0.75rem; color:var(--text-muted)">{{ item.source }}</span>
+                <span style="font-size:0.75rem; color:var(--text-muted)">Source: {{ item.source }}</span>
                 <div class="share-links">
                     <a href="https://wa.me/?text={{ item.link }}" target="_blank" class="share-icon"><i class="fab fa-whatsapp"></i></a>
                     <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ item.link }}" target="_blank" class="share-icon"><i class="fab fa-linkedin"></i></a>
@@ -228,14 +244,26 @@ HTML_TEMPLATE = """
         {% endfor %}
     </div>
 
+    <div class="pagination" id="paginationControls">
+        <button class="page-btn" onclick="changePage(-1)" id="prevBtn">< Previous</button>
+        <span class="page-info" id="pageInfo">Page 1</span>
+        <button class="page-btn" onclick="changePage(1)" id="nextBtn">Next ></button>
+    </div>
+
     <footer>
-        Developed by <a href="{{ github_profile }}" style="color:var(--text-main);text-decoration:none;font-weight:bold;">Merve Guler</a> 
+        Developed by <a href="{{ github_repo }}" style="color:var(--text-main);text-decoration:none;font-weight:bold;">Merve Guler</a> 
         <span class="heart">🩷</span>
     </footer>
 </div>
 
 <script>
-    // 1. THEME TOGGLE
+    // --- VARIABLES ---
+    const cards = Array.from(document.querySelectorAll('.card'));
+    const itemsPerPage = 9; // Show 9 items per page
+    let currentPage = 1;
+    let filteredCards = cards; // Initially all cards
+
+    // --- 1. THEME TOGGLE ---
     const toggleBtn = document.getElementById('themeToggle');
     const icon = toggleBtn.querySelector('i');
     const body = document.body;
@@ -259,8 +287,7 @@ HTML_TEMPLATE = """
         }
     });
 
-    // 2. SOURCE FILTER GENERATION
-    const cards = document.querySelectorAll('.card');
+    // --- 2. SOURCE FILTER GENERATION ---
     const sources = new Set();
     cards.forEach(card => sources.add(card.getAttribute('data-source')));
     const sourceContainer = document.getElementById('sourceFilterContainer');
@@ -269,43 +296,76 @@ HTML_TEMPLATE = """
         const btn = document.createElement('button');
         btn.innerText = source;
         btn.className = 'filter-btn';
-        btn.onclick = () => filterNews(source);
+        btn.onclick = () => applyFilter(source);
         sourceContainer.appendChild(btn);
     });
 
-    // 3. FILTER LOGIC
-    function filterNews(criteria) {
+    // --- 3. FILTER LOGIC ---
+    function applyFilter(criteria) {
+        // Active Class Handling
         document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
         event.target.classList.add('active');
 
-        cards.forEach(card => {
+        // Filter Logic
+        filteredCards = cards.filter(card => {
             const source = card.getAttribute('data-source');
             const category = card.getAttribute('data-category');
             const isZeroDay = card.getAttribute('data-zeroday') === 'true';
 
-            let show = false;
-            if (criteria === 'all') show = true;
-            else if (criteria === 'zeroday') show = isZeroDay;
-            else if (category === criteria) show = true;
-            else if (source === criteria) show = true;
-
-            card.style.display = show ? 'flex' : 'none';
+            if (criteria === 'all') return true;
+            if (criteria === 'zeroday') return isZeroDay;
+            if (category === criteria) return true;
+            if (source === criteria) return true;
+            return false;
         });
+
+        // Reset to Page 1 and Render
+        currentPage = 1;
+        renderPagination();
     }
 
-    // 4. EXCEL EXPORT
+    // --- 4. PAGINATION LOGIC ---
+    function renderPagination() {
+        const totalPages = Math.ceil(filteredCards.length / itemsPerPage);
+        
+        // Hide all cards first
+        cards.forEach(card => card.style.display = 'none');
+
+        // Calculate slice
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const pageItems = filteredCards.slice(start, end);
+
+        // Show only current page items
+        pageItems.forEach(card => card.style.display = 'flex');
+
+        // Update Buttons
+        document.getElementById('pageInfo').innerText = `Page ${currentPage} of ${totalPages || 1}`;
+        document.getElementById('prevBtn').disabled = currentPage === 1;
+        document.getElementById('nextBtn').disabled = currentPage >= totalPages;
+        
+        // Hide pagination if no items
+        document.getElementById('paginationControls').style.display = filteredCards.length > 0 ? 'flex' : 'none';
+    }
+
+    function changePage(direction) {
+        currentPage += direction;
+        renderPagination();
+        window.scrollTo(0, 0); // Scroll to top
+    }
+
+    // --- 5. EXCEL EXPORT ---
     function exportToExcel() {
         let csv = "Category,Source,Date,Title,Link,Summary\\n";
-        cards.forEach(card => {
-            if (card.style.display !== 'none') {
-                const cat = card.getAttribute('data-category');
-                const src = card.getAttribute('data-source');
-                const date = card.querySelector('.meta span:last-child').innerText;
-                const title = card.querySelector('h2 a').innerText.replace(/,/g, '');
-                const link = card.querySelector('h2 a').href;
-                const sum = card.querySelector('.summary').innerText.replace(/\\n/g, ' ').replace(/,/g, '');
-                csv += `${cat},${src},${date},${title},${link},"${sum}"\\n`;
-            }
+        // Export ONLY visible filtered items (all pages of filter)
+        filteredCards.forEach(card => {
+            const cat = card.getAttribute('data-category');
+            const src = card.getAttribute('data-source');
+            const date = card.querySelector('.meta span:last-child').innerText.replace('| ', '');
+            const title = card.querySelector('h2 a').innerText.replace(/,/g, '');
+            const link = card.querySelector('h2 a').href;
+            const sum = card.querySelector('.summary').innerText.replace(/\\n/g, ' ').replace(/,/g, '');
+            csv += `${cat},${src},${date},${title},${link},"${sum}"\\n`;
         });
         const link = document.createElement("a");
         link.href = encodeURI("data:text/csv;charset=utf-8," + csv);
@@ -314,6 +374,10 @@ HTML_TEMPLATE = """
         link.click();
         document.body.removeChild(link);
     }
+
+    // Initial Render
+    renderPagination();
+
 </script>
 </body>
 </html>
@@ -322,9 +386,12 @@ HTML_TEMPLATE = """
 # --- 3. BACKEND LOGIC ---
 
 def clean_html(raw_html):
-    """Remove HTML tags from summaries."""
+    """Remove HTML tags and cut cleanly."""
     cleanr = re.compile('<.*?>')
     cleantext = re.sub(cleanr, '', raw_html)
+    # Cut at 400 chars but try to keep word boundary
+    if len(cleantext) > 400:
+        return cleantext[:400].rsplit(' ', 1)[0] + "..."
     return cleantext.strip()
 
 def determine_category(source_name):
@@ -379,7 +446,7 @@ def fetch_rss_feeds():
                     title = entry.title
                     # Get summary and clean HTML
                     raw_summary = entry.get('summary', entry.get('description', ''))
-                    clean_summary = clean_html(raw_summary)[:500]
+                    clean_summary = clean_html(raw_summary)
                     
                     is_zeroday = any(k in title.lower() or k in clean_summary.lower() for k in zeroday_keywords)
                     
@@ -420,8 +487,10 @@ def process_ai_summaries(new_articles):
             try:
                 print(f"    [{count}/{total}] Summarizing: {article['title'][:30]}...")
                 context = "CRITICAL VULNERABILITY! " if article['is_zeroday'] else ""
-                prompt = (f"{context}Summarize this cybersecurity news in English in one technical, "
-                          f"concise paragraph (Max 35 words). News: {article['title']} - {article['raw_summary']}")
+                # Improved Prompt: Explicitly ask for full sentences
+                prompt = (f"{context}Summarize this cybersecurity news in English. "
+                          f"Provide exactly one complete, technical paragraph. Do not cut off sentences. "
+                          f"Max 50 words. News: {article['title']} - {article['raw_summary']}")
                 
                 response = model.generate_content(prompt)
                 article['summary'] = response.text
@@ -457,7 +526,7 @@ def main():
         full_list = processed_news + history
         full_list.sort(key=lambda x: x['timestamp'], reverse=True)
         
-        # 6. Trim History
+        # 6. Trim History (Keep last 600)
         full_list = full_list[:MAX_HISTORY]
         
         # 7. Save Data
@@ -472,7 +541,7 @@ def main():
     output_html = template.render(
         items=full_list,
         last_updated=datetime.now().strftime("%Y-%m-%d %H:%M UTC"),
-        github_profile=GITHUB_PROFILE
+        github_repo=GITHUB_REPO
     )
     
     with open("index.html", "w", encoding="utf-8") as f:
