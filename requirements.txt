@@ -1,0 +1,6 @@
+feedparser
+openai
+jinja2
+requests
+pytz
+beautifulsoup4
