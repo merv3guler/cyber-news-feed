@@ -1,0 +1,36 @@
+name: Daily Cyber Update
+
+on:
+  schedule:
+    - cron: '0 8 * * *'  # Her sabah 08:00 UTC
+  workflow_dispatch:      # Manuel tetikleme (Senin istediğin terminal olayı için)
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kodu Çek
+        uses: actions/checkout@v3
+
+      - name: Python Kur
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Kütüphaneleri Yükle
+        run: pip install -r requirements.txt
+
+      - name: Scripti Çalıştır
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: python main.py
+
+      - name: Siteyi Yayınla
+        run: |
+          git config --global user.name 'CyberBot'
+          git config --global user.email 'bot@noreply.github.com'
+          git add index.html
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update Feed" && git push)
