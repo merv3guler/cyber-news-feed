@@ -112,7 +112,7 @@ def summarize_with_gemini(articles):
             prompt = f"Bu siber güvenlik haberini Türkçe olarak tek bir paragrafta, teknik ve net bir dille özetle. (Max 30 kelime). Haber: {article['title']} - {article['raw_summary']}"
             response = model.generate_content(prompt)
             article['summary'] = response.text
-            time.sleep(1) # Gemini'yi yormamak için 1 saniye bekle
+            time.sleep(10) # Gemini'yi yormamak için 10 saniye bekle
         except Exception as e:
             print(f"AI Hatası: {e}")
             article['summary'] = article['raw_summary']
