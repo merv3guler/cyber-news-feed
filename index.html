@@ -120,6 +120,18 @@
         .share-icon:hover { color: var(--accent); transform: scale(1.1); }
         .share-icon:hover .fa-x-twitter { color: var(--text-main); }
         
+        /* NO CONTENT MESSAGE */
+        .no-content {
+            display: none; /* Hidden by default */
+            text-align: center;
+            padding: 40px;
+            background: var(--card-bg);
+            border: 1px dashed var(--border);
+            border-radius: 6px;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono';
+        }
+
         /* PAGINATION */
         .pagination { display: flex; justify-content: center; gap: 10px; margin-top: 40px; }
         .page-btn {
@@ -148,7 +160,7 @@
         <div>
             <h1>/// CYBER_INTEL_FEED</h1>
             <small style="font-family: 'JetBrains Mono'; color: var(--text-muted);">
-                Status: <span style="color:var(--accent)">ONLINE</span> | 2026-02-11 14:36 UTC
+                Status: <span style="color:var(--accent)">ONLINE</span> | 2026-02-11 14:53 UTC
             </small>
         </div>
         <div class="header-controls">
@@ -159,11 +171,37 @@
 
     <div class="controls-bar">
         <div class="filter-container">
-            <span class="filter-label">FILTERS:</span>
+            <span class="filter-label">SOURCES:</span>
             <button class="filter-btn active" onclick="applyFilter('all')">ALL</button>
             <button class="filter-btn zeroday-btn" onclick="applyFilter('zeroday')">ZERO DAY</button>
             
-            <div id="dynamicSourceFilters" style="display:contents;"></div>
+            
+            <button class="filter-btn" onclick="applyFilter('The Hacker News')">The Hacker News</button>
+            
+            <button class="filter-btn" onclick="applyFilter('BleepingComputer')">BleepingComputer</button>
+            
+            <button class="filter-btn" onclick="applyFilter('CISA Alerts')">CISA Alerts</button>
+            
+            <button class="filter-btn" onclick="applyFilter('Google Security')">Google Security</button>
+            
+            <button class="filter-btn" onclick="applyFilter('The Register')">The Register</button>
+            
+            <button class="filter-btn" onclick="applyFilter('SANS ISC')">SANS ISC</button>
+            
+            <button class="filter-btn" onclick="applyFilter('Krebs on Security')">Krebs on Security</button>
+            
+            <button class="filter-btn" onclick="applyFilter('Schneier on Security')">Schneier on Security</button>
+            
+            <button class="filter-btn" onclick="applyFilter('Palo Alto Unit 42')">Palo Alto Unit 42</button>
+            
+            <button class="filter-btn" onclick="applyFilter('Trend Micro')">Trend Micro</button>
+            
+            <button class="filter-btn" onclick="applyFilter('Dark Reading')">Dark Reading</button>
+            
+            <button class="filter-btn" onclick="applyFilter('Threatpost')">Threatpost</button>
+            
+            <button class="filter-btn" onclick="applyFilter('Exploit-DB')">Exploit-DB</button>
+            
         </div>
         
         <div style="display:flex; justify-content:flex-end; margin-top:10px;">
@@ -174,13 +212,36 @@
     <div class="grid" id="newsGrid">
         
         <article class="card" 
-                 data-source="darkreading" 
+                 data-source="Schneier on Security" 
                  data-zeroday="false">
             
             
             
             <div class="meta">
-                <span class="source-badge">darkreading</span>
+                <span class="source-badge">Schneier on Security</span>
+                <span class="date-badge"> | 2026-02-11 14:48</span>
+            </div>
+            <h2><a href="https://www.schneier.com/blog/archives/2026/02/rewiring-democracy-ebook-is-on-sale.html" target="_blank">Rewiring Democracy Ebook is on Sale</a></h2>
+            <div class="summary">I just noticed that the ebook version of Rewriring Democracy is on sale for $5 on Amazon, Apple Books, Barnes &#38; Noble, Books A Million, Google Play, Kobo, and presumably everywhere else in the US. I have no idea how long this will last.</div>
+
+            <div class="card-footer">
+                <div class="share-links">
+                    <a href="https://wa.me/?text=https://www.schneier.com/blog/archives/2026/02/rewiring-democracy-ebook-is-on-sale.html" target="_blank" class="share-icon"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.schneier.com/blog/archives/2026/02/rewiring-democracy-ebook-is-on-sale.html" target="_blank" class="share-icon"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://twitter.com/intent/tweet?text=Rewiring Democracy Ebook is on Sale&url=https://www.schneier.com/blog/archives/2026/02/rewiring-democracy-ebook-is-on-sale.html" target="_blank" class="share-icon"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="mailto:?subject=Cyber Intel&body=Rewiring Democracy Ebook is on Sale - https://www.schneier.com/blog/archives/2026/02/rewiring-democracy-ebook-is-on-sale.html" class="share-icon"><i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+        </article>
+        
+        <article class="card" 
+                 data-source="Dark Reading" 
+                 data-zeroday="false">
+            
+            
+            
+            <div class="meta">
+                <span class="source-badge">Dark Reading</span>
                 <span class="date-badge"> | 2026-02-11 14:31</span>
             </div>
             <h2><a href="https://www.darkreading.com/data-privacy/do-we-know-enough-about-data-populating-ai" target="_blank">AI Rising: Do We Know Enough About the Data Populating It?</a></h2>
@@ -197,13 +258,13 @@
         </article>
         
         <article class="card" 
-                 data-source="darkreading" 
+                 data-source="Dark Reading" 
                  data-zeroday="false">
             
             
             
             <div class="meta">
-                <span class="source-badge">darkreading</span>
+                <span class="source-badge">Dark Reading</span>
                 <span class="date-badge"> | 2026-02-11 14:00</span>
             </div>
             <h2><a href="https://www.darkreading.com/application-security/cyber-industry-defenses-co2-emissions" target="_blank">Top Cyber Industry Defenses Spike CO2 Emissions</a></h2>
@@ -220,13 +281,13 @@
         </article>
         
         <article class="card" 
-                 data-source="SANS Internet Storm " 
+                 data-source="SANS ISC" 
                  data-zeroday="false">
             
             
             
             <div class="meta">
-                <span class="source-badge">SANS Internet Storm </span>
+                <span class="source-badge">SANS ISC</span>
                 <span class="date-badge"> | 2026-02-11 13:28</span>
             </div>
             <h2><a href="https://isc.sans.edu/diary/rss/32704" target="_blank">WSL in the Malware Ecosystem, (Wed, Feb 11th)</a></h2>
@@ -243,13 +304,38 @@
         </article>
         
         <article class="card" 
-                 data-source="The Register - Secur" 
+                 data-source="The Hacker News" 
                  data-zeroday="true">
             
             <div class="zeroday-banner">⚠️ ZERO-DAY DETECTED</div>
             
             <div class="meta">
-                <span class="source-badge">The Register - Secur</span>
+                <span class="source-badge">The Hacker News</span>
+                <span class="date-badge"> | 2026-02-11 13:28</span>
+            </div>
+            <h2><a href="https://thehackernews.com/2026/02/over-60-software-vendors-issue-security.html" target="_blank">Over 60 Software Vendors Issue Security Fixes Across OS, Cloud, and Network Platforms</a></h2>
+            <div class="summary">It's Patch Tuesday, which means a number of software vendors have released patches for various security vulnerabilities impacting their products and services.
+Microsoft issued fixes for 59 flaws, including six actively exploited zero-days in various Windows components that could be abused to bypass security features, escalate privileges, and trigger a denial-of-service (DoS) condition.
+Elsewhere</div>
+
+            <div class="card-footer">
+                <div class="share-links">
+                    <a href="https://wa.me/?text=https://thehackernews.com/2026/02/over-60-software-vendors-issue-security.html" target="_blank" class="share-icon"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://thehackernews.com/2026/02/over-60-software-vendors-issue-security.html" target="_blank" class="share-icon"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://twitter.com/intent/tweet?text=Over 60 Software Vendors Issue Security Fixes Across OS, Cloud, and Network Platforms&url=https://thehackernews.com/2026/02/over-60-software-vendors-issue-security.html" target="_blank" class="share-icon"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="mailto:?subject=Cyber Intel&body=Over 60 Software Vendors Issue Security Fixes Across OS, Cloud, and Network Platforms - https://thehackernews.com/2026/02/over-60-software-vendors-issue-security.html" class="share-icon"><i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+        </article>
+        
+        <article class="card" 
+                 data-source="The Register" 
+                 data-zeroday="true">
+            
+            <div class="zeroday-banner">⚠️ ZERO-DAY DETECTED</div>
+            
+            <div class="meta">
+                <span class="source-badge">The Register</span>
                 <span class="date-badge"> | 2026-02-11 13:00</span>
             </div>
             <h2><a href="https://go.theregister.com/feed/www.theregister.com/2026/02/11/payroll_pirates_business_social_engineering/" target="_blank">Payroll pirates are conning help desks to steal workers' identities and redirect paychecks</a></h2>
@@ -290,13 +376,13 @@ Abstract: Embodied Artificial Intelligence (AI) promises to handle edge cases in
         </article>
         
         <article class="card" 
-                 data-source="The Register - Secur" 
+                 data-source="The Register" 
                  data-zeroday="false">
             
             
             
             <div class="meta">
-                <span class="source-badge">The Register - Secur</span>
+                <span class="source-badge">The Register</span>
                 <span class="date-badge"> | 2026-02-11 11:31</span>
             </div>
             <h2><a href="https://go.theregister.com/feed/www.theregister.com/2026/02/11/notepad_rce_flaw/" target="_blank">Notepad's new Markdown powers served with a side of remote code execution</a></h2>
@@ -385,13 +471,13 @@ Of the 59 flaws, five are rated Critical, 52 are rated Important, and two are ra
         </article>
         
         <article class="card" 
-                 data-source="The Register - Secur" 
+                 data-source="The Register" 
                  data-zeroday="false">
             
             
             
             <div class="meta">
-                <span class="source-badge">The Register - Secur</span>
+                <span class="source-badge">The Register</span>
                 <span class="date-badge"> | 2026-02-11 09:30</span>
             </div>
             <h2><a href="https://go.theregister.com/feed/www.theregister.com/2026/02/11/uk_afghan_breach_probe/" target="_blank">Legacy systems blamed as ministers promise no repeat of Afghan breach</a></h2>
@@ -455,13 +541,13 @@ Of the 59 flaws, five are rated Critical, 52 are rated Important, and two are ra
         </article>
         
         <article class="card" 
-                 data-source="SANS Internet Storm " 
+                 data-source="SANS ISC" 
                  data-zeroday="false">
             
             
             
             <div class="meta">
-                <span class="source-badge">SANS Internet Storm </span>
+                <span class="source-badge">SANS ISC</span>
                 <span class="date-badge"> | 2026-02-11 02:05</span>
             </div>
             <h2><a href="https://isc.sans.edu/diary/rss/32702" target="_blank">ISC Stormcast For Wednesday, February 11th, 2026 https://isc.sans.edu/podcastdetail/9804, (Wed, Feb 11th)</a></h2>
@@ -478,13 +564,13 @@ Of the 59 flaws, five are rated Critical, 52 are rated Important, and two are ra
         </article>
         
         <article class="card" 
-                 data-source="darkreading" 
+                 data-source="Dark Reading" 
                  data-zeroday="false">
             
             
             
             <div class="meta">
-                <span class="source-badge">darkreading</span>
+                <span class="source-badge">Dark Reading</span>
                 <span class="date-badge"> | 2026-02-11 02:00</span>
             </div>
             <h2><a href="https://www.darkreading.com/threat-intelligence/asia-fumbles-telnet-threat-traffic" target="_blank">Asia Fumbles With Throttling Back Telnet Traffic in Region</a></h2>
@@ -501,13 +587,13 @@ Of the 59 flaws, five are rated Critical, 52 are rated Important, and two are ra
         </article>
         
         <article class="card" 
-                 data-source="Exploit-DB.com RSS F" 
+                 data-source="Exploit-DB" 
                  data-zeroday="false">
             
             
             
             <div class="meta">
-                <span class="source-badge">Exploit-DB.com RSS F</span>
+                <span class="source-badge">Exploit-DB</span>
                 <span class="date-badge"> | 2026-02-11 00:00</span>
             </div>
             <h2><a href="https://www.exploit-db.com/exploits/52481" target="_blank">[webapps] motionEye 0.43.1b4 - RCE</a></h2>
@@ -524,13 +610,13 @@ Of the 59 flaws, five are rated Critical, 52 are rated Important, and two are ra
         </article>
         
         <article class="card" 
-                 data-source="Exploit-DB.com RSS F" 
+                 data-source="Exploit-DB" 
                  data-zeroday="true">
             
             <div class="zeroday-banner">⚠️ ZERO-DAY DETECTED</div>
             
             <div class="meta">
-                <span class="source-badge">Exploit-DB.com RSS F</span>
+                <span class="source-badge">Exploit-DB</span>
                 <span class="date-badge"> | 2026-02-11 00:00</span>
             </div>
             <h2><a href="https://www.exploit-db.com/exploits/52480" target="_blank">[remote] Windows 10.0.17763.7009 - spoofing vulnerability</a></h2>
@@ -547,13 +633,13 @@ Of the 59 flaws, five are rated Critical, 52 are rated Important, and two are ra
         </article>
         
         <article class="card" 
-                 data-source="Exploit-DB.com RSS F" 
+                 data-source="Exploit-DB" 
                  data-zeroday="false">
             
             
             
             <div class="meta">
-                <span class="source-badge">Exploit-DB.com RSS F</span>
+                <span class="source-badge">Exploit-DB</span>
                 <span class="date-badge"> | 2026-02-11 00:00</span>
             </div>
             <h2><a href="https://www.exploit-db.com/exploits/52479" target="_blank">[local] glibc 2.38 - Buffer Overflow</a></h2>
@@ -593,13 +679,13 @@ Of the 59 flaws, five are rated Critical, 52 are rated Important, and two are ra
         </article>
         
         <article class="card" 
-                 data-source="Unit 42" 
+                 data-source="Palo Alto Unit 42" 
                  data-zeroday="false">
             
             
             
             <div class="meta">
-                <span class="source-badge">Unit 42</span>
+                <span class="source-badge">Palo Alto Unit 42</span>
                 <span class="date-badge"> | 2026-02-10 23:00</span>
             </div>
             <h2><a href="https://unit42.paloaltonetworks.com/muddled-libra-ops-playbook/" target="_blank">A Peek Into Muddled Libra’s Operational Playbook</a></h2>
@@ -640,13 +726,13 @@ The post A Peek Into Muddled Libra’s Operational Playbook appeared first on Un
         </article>
         
         <article class="card" 
-                 data-source="The Register - Secur" 
+                 data-source="The Register" 
                  data-zeroday="true">
             
             <div class="zeroday-banner">⚠️ ZERO-DAY DETECTED</div>
             
             <div class="meta">
-                <span class="source-badge">The Register - Secur</span>
+                <span class="source-badge">The Register</span>
                 <span class="date-badge"> | 2026-02-10 22:10</span>
             </div>
             <h2><a href="https://go.theregister.com/feed/www.theregister.com/2026/02/10/microsofts_valentines_gift_to_admins/" target="_blank">Microsoft's Valentine's gift to admins: 6 exploited zero-day fixes</a></h2>
@@ -663,13 +749,13 @@ The post A Peek Into Muddled Libra’s Operational Playbook appeared first on Un
         </article>
         
         <article class="card" 
-                 data-source="darkreading" 
+                 data-source="Dark Reading" 
                  data-zeroday="false">
             
             
             
             <div class="meta">
-                <span class="source-badge">darkreading</span>
+                <span class="source-badge">Dark Reading</span>
                 <span class="date-badge"> | 2026-02-10 22:00</span>
             </div>
             <h2><a href="https://www.darkreading.com/vulnerabilities-threats/solarwinds-whd-attacks-exposed-apps" target="_blank">SolarWinds WHD Attacks Highlight Risks of Exposed Apps</a></h2>
@@ -709,13 +795,13 @@ The post A Peek Into Muddled Libra’s Operational Playbook appeared first on Un
         </article>
         
         <article class="card" 
-                 data-source="darkreading" 
+                 data-source="Dark Reading" 
                  data-zeroday="false">
             
             
             
             <div class="meta">
-                <span class="source-badge">darkreading</span>
+                <span class="source-badge">Dark Reading</span>
                 <span class="date-badge"> | 2026-02-10 21:37</span>
             </div>
             <h2><a href="https://www.darkreading.com/threat-intelligence/zerodayrat-brings-commercial-spyware-to-mass-market" target="_blank">In Bypassing MFA, ZeroDayRAT Is 'Textbook Stalkerware'</a></h2>
@@ -732,13 +818,13 @@ The post A Peek Into Muddled Libra’s Operational Playbook appeared first on Un
         </article>
         
         <article class="card" 
-                 data-source="darkreading" 
+                 data-source="Dark Reading" 
                  data-zeroday="true">
             
             <div class="zeroday-banner">⚠️ ZERO-DAY DETECTED</div>
             
             <div class="meta">
-                <span class="source-badge">darkreading</span>
+                <span class="source-badge">Dark Reading</span>
                 <span class="date-badge"> | 2026-02-10 21:00</span>
             </div>
             <h2><a href="https://www.darkreading.com/vulnerabilities-threats/microsoft-fixes-6-actively-exploited-zero-days" target="_blank">Microsoft Patches 6 Actively Exploited Zero-Days</a></h2>
@@ -801,13 +887,13 @@ The post A Peek Into Muddled Libra’s Operational Playbook appeared first on Un
         </article>
         
         <article class="card" 
-                 data-source="SANS Internet Storm " 
+                 data-source="SANS ISC" 
                  data-zeroday="true">
             
             <div class="zeroday-banner">⚠️ ZERO-DAY DETECTED</div>
             
             <div class="meta">
-                <span class="source-badge">SANS Internet Storm </span>
+                <span class="source-badge">SANS ISC</span>
                 <span class="date-badge"> | 2026-02-10 19:04</span>
             </div>
             <h2><a href="https://isc.sans.edu/diary/rss/32700" target="_blank">Microsoft Patch Tuesday - February 2026, (Tue, Feb 10th)</a></h2>
@@ -870,13 +956,13 @@ The post A Peek Into Muddled Libra’s Operational Playbook appeared first on Un
         </article>
         
         <article class="card" 
-                 data-source="The Register - Secur" 
+                 data-source="The Register" 
                  data-zeroday="false">
             
             
             
             <div class="meta">
-                <span class="source-badge">The Register - Secur</span>
+                <span class="source-badge">The Register</span>
                 <span class="date-badge"> | 2026-02-10 17:55</span>
             </div>
             <h2><a href="https://go.theregister.com/feed/www.theregister.com/2026/02/10/ai_agents_messaging_apps_data_leak/" target="_blank">AI agents spill secrets just by previewing malicious links</a></h2>
@@ -963,13 +1049,13 @@ The post A Peek Into Muddled Libra’s Operational Playbook appeared first on Un
         </article>
         
         <article class="card" 
-                 data-source="darkreading" 
+                 data-source="Dark Reading" 
                  data-zeroday="false">
             
             
             
             <div class="meta">
-                <span class="source-badge">darkreading</span>
+                <span class="source-badge">Dark Reading</span>
                 <span class="date-badge"> | 2026-02-10 16:14</span>
             </div>
             <h2><a href="https://www.darkreading.com/ics-ot-security/ot-attacks-living-off-the-plant" target="_blank">OT Attacks Get Scary With 'Living-off-the-Plant' Techniques</a></h2>
@@ -1033,6 +1119,11 @@ The post A Peek Into Muddled Libra’s Operational Playbook appeared first on Un
         
     </div>
 
+    <div id="noContentMsg" class="no-content">
+        <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 10px; display:block;"></i>
+        No current content available for this source.
+    </div>
+
     <div class="pagination" id="paginationControls">
         <button class="page-btn" onclick="changePage(-1)" id="prevBtn">< Previous</button>
         <span class="page-info" id="pageInfo">Page 1</span>
@@ -1076,20 +1167,7 @@ The post A Peek Into Muddled Libra’s Operational Playbook appeared first on Un
         }
     });
 
-    // --- 2. SOURCE FILTER GENERATION ---
-    const sources = new Set();
-    cards.forEach(card => sources.add(card.getAttribute('data-source')));
-    const sourceContainer = document.getElementById('dynamicSourceFilters');
-    
-    Array.from(sources).sort().forEach(source => {
-        const btn = document.createElement('button');
-        btn.innerText = source;
-        btn.className = 'filter-btn';
-        btn.onclick = () => applyFilter(source);
-        sourceContainer.appendChild(btn);
-    });
-
-    // --- 3. FILTER LOGIC ---
+    // --- 2. FILTER LOGIC ---
     function applyFilter(criteria) {
         document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
         event.target.classList.add('active');
@@ -1104,11 +1182,23 @@ The post A Peek Into Muddled Libra’s Operational Playbook appeared first on Un
             return false;
         });
 
+        // Show/Hide No Content Message
+        const noContentMsg = document.getElementById('noContentMsg');
+        const grid = document.getElementById('newsGrid');
+        
+        if (filteredCards.length === 0) {
+            noContentMsg.style.display = 'block';
+            grid.style.display = 'none';
+        } else {
+            noContentMsg.style.display = 'none';
+            grid.style.display = 'flex';
+        }
+
         currentPage = 1;
         renderPagination();
     }
 
-    // --- 4. PAGINATION LOGIC ---
+    // --- 3. PAGINATION LOGIC ---
     function renderPagination() {
         const totalPages = Math.ceil(filteredCards.length / itemsPerPage);
         
@@ -1124,7 +1214,8 @@ The post A Peek Into Muddled Libra’s Operational Playbook appeared first on Un
         document.getElementById('prevBtn').disabled = currentPage === 1;
         document.getElementById('nextBtn').disabled = currentPage >= totalPages;
         
-        document.getElementById('paginationControls').style.display = filteredCards.length > 0 ? 'flex' : 'none';
+        // Hide pagination if no items or fit in one page
+        document.getElementById('paginationControls').style.display = (filteredCards.length > 0 && totalPages > 1) ? 'flex' : 'none';
     }
 
     function changePage(direction) {
@@ -1133,7 +1224,7 @@ The post A Peek Into Muddled Libra’s Operational Playbook appeared first on Un
         window.scrollTo(0, 0); 
     }
 
-    // --- 5. EXCEL EXPORT ---
+    // --- 4. EXCEL EXPORT ---
     function exportToExcel() {
         let csv = "Source,Date,Title,Link,Summary\n";
         filteredCards.forEach(card => {
@@ -1152,6 +1243,7 @@ The post A Peek Into Muddled Libra’s Operational Playbook appeared first on Un
         document.body.removeChild(link);
     }
 
+    // Initial render
     renderPagination();
 
 </script>
