@@ -11,7 +11,7 @@ import google.generativeai as genai
 # --- 1. CONFIGURATION ---
 GITHUB_REPO = "https://github.com/merv3guler/cyber-news-feed"
 DATA_FILE = "data/articles.json"
-MAX_HISTORY = 600  # Arşiv kapasitesi
+MAX_HISTORY = 600
 
 RSS_FEEDS = [
     "https://feeds.feedburner.com/TheHackersNews",
@@ -26,13 +26,6 @@ RSS_FEEDS = [
     "https://www.darkreading.com/rss.xml",
     "https://threatpost.com/feed/"
 ]
-
-# Kaynakları Kategorilere Ayırma Haritası
-CATEGORY_MAP = {
-    "News": ["Hacker News", "Bleeping", "Register", "Dark Reading", "Threatpost"],
-    "Alerts": ["CISA", "SANS", "CERT", "Advisory"],
-    "Research": ["Krebs", "Schneier", "Google", "Trend Micro", "Project Zero"]
-}
 
 # --- 2. HTML TEMPLATE (Frontend) ---
 HTML_TEMPLATE = """
@@ -56,12 +49,7 @@ HTML_TEMPLATE = """
             --accent-glow: rgba(0, 255, 65, 0.2);
             --danger: #ff003c;
             --sun-color: #f39c12;
-            
-            /* Category Colors */
-            --cat-news: #3498db;
-            --cat-alerts: #e67e22;
-            --cat-research: #9b59b6;
-            --cat-vulns: #e74c3c;
+            --source-badge-bg: #1f6feb; /* Blue for source badges */
         }
 
         body.light-mode {
@@ -72,6 +60,7 @@ HTML_TEMPLATE = """
             --border: #d0d7de;
             --accent: #1f883d;
             --accent-glow: rgba(31, 136, 61, 0.1);
+            --source-badge-bg: #0969da;
         }
 
         body {
@@ -106,8 +95,13 @@ HTML_TEMPLATE = """
 
         /* FILTERS */
         .controls-bar { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; }
-        .filter-group { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-        .filter-label { font-size: 0.8rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; font-weight: bold; }
+        
+        /* Merged Filter Group */
+        .filter-container {
+            display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+        }
+
+        .filter-label { font-size: 0.8rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; font-weight: bold; margin-right: 5px; }
         
         .filter-btn {
             background-color: var(--card-bg); border: 1px solid var(--border); color: var(--text-muted);
@@ -117,24 +111,16 @@ HTML_TEMPLATE = """
         .filter-btn.zeroday-btn { border-color: var(--danger); color: var(--danger); }
         .filter-btn.zeroday-btn:hover, .filter-btn.zeroday-btn.active { background-color: var(--danger); color: #fff; }
 
-        /* LIST LAYOUT (RECTANGULAR CARDS) */
+        /* LIST LAYOUT */
         .grid { display: flex; flex-direction: column; gap: 20px; }
         
         .card {
             background-color: var(--card-bg); border: 1px solid var(--border); border-radius: 6px;
             padding: 20px; display: flex; flex-direction: column; position: relative;
-            transition: transform 0.2s; overflow: hidden; border-left: 4px solid transparent;
-            /* Rectangle styling */
-            min-height: auto;
+            transition: transform 0.2s; overflow: hidden; border-left: 4px solid var(--accent); /* Default Border */
         }
         .card:hover { transform: translateX(5px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); border-color: var(--accent); }
         
-        /* Category Borders (Left Side) */
-        .card[data-category="News"] { border-left-color: var(--cat-news); }
-        .card[data-category="Alerts"] { border-left-color: var(--cat-alerts); }
-        .card[data-category="Research"] { border-left-color: var(--cat-research); }
-        .card[data-category="Vulns"] { border-left-color: var(--cat-vulns); }
-
         .zeroday-banner {
             background-color: var(--danger); color: #fff; font-size: 0.7rem; font-weight: bold;
             padding: 4px 8px; position: absolute; top: 0; right: 0;
@@ -143,7 +129,12 @@ HTML_TEMPLATE = """
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
 
         .meta { display: flex; gap: 15px; margin-bottom: 8px; font-size: 0.75rem; font-family: 'JetBrains Mono'; align-items: center;}
-        .category-badge { font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        /* Source is now the main badge */
+        .source-badge { 
+            font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;
+            color: var(--source-badge-bg);
+        }
         .date-badge { color: var(--text-muted); }
         
         h2 { font-size: 1.2rem; margin: 0 0 10px 0; line-height: 1.3; }
@@ -154,7 +145,7 @@ HTML_TEMPLATE = """
 
         .card-footer {
             border-top: 1px solid var(--border); padding-top: 12px;
-            display: flex; justify-content: space-between; align-items: center;
+            display: flex; justify-content: flex-end; align-items: center; /* Changed to flex-end as source is now at top */
         }
         .share-links { display: flex; gap: 15px; }
         .share-icon { color: var(--text-muted); font-size: 1.1rem; transition: 0.2s; }
@@ -199,18 +190,15 @@ HTML_TEMPLATE = """
     </header>
 
     <div class="controls-bar">
-        <div class="filter-group">
-            <span class="filter-label">CATEGORIES:</span>
+        <div class="filter-container">
+            <span class="filter-label">FILTERS:</span>
             <button class="filter-btn active" onclick="applyFilter('all')">ALL</button>
             <button class="filter-btn zeroday-btn" onclick="applyFilter('zeroday')">ZERO DAY</button>
-            <button class="filter-btn" onclick="applyFilter('News')">NEWS</button>
-            <button class="filter-btn" onclick="applyFilter('Alerts')">ALERTS</button>
-            <button class="filter-btn" onclick="applyFilter('Research')">RESEARCH</button>
+            
+            <div id="dynamicSourceFilters" style="display:contents;"></div>
         </div>
-        <div style="display:flex; justify-content:space-between; width:100%; flex-wrap: wrap; gap:10px;">
-            <div class="filter-group" id="sourceFilterContainer">
-                <span class="filter-label">SOURCES:</span>
-                </div>
+        
+        <div style="display:flex; justify-content:flex-end; margin-top:10px;">
             <button class="export-btn" onclick="exportToExcel()"><i class="fas fa-file-excel"></i> Export CSV</button>
         </div>
     </div>
@@ -219,20 +207,18 @@ HTML_TEMPLATE = """
         {% for item in items %}
         <article class="card" 
                  data-source="{{ item.source }}" 
-                 data-category="{{ item.category }}" 
                  data-zeroday="{{ 'true' if item.is_zeroday else 'false' }}">
             
             {% if item.is_zeroday %}<div class="zeroday-banner">⚠️ ZERO-DAY DETECTED</div>{% endif %}
             
             <div class="meta">
-                <span class="category-badge" style="color: var(--cat-{{ item.category | lower }})">{{ item.category }}</span>
+                <span class="source-badge">{{ item.source }}</span>
                 <span class="date-badge"> | {{ item.date }}</span>
             </div>
             <h2><a href="{{ item.link }}" target="_blank">{{ item.title }}</a></h2>
             <div class="summary">{{ item.summary | safe }}</div>
 
             <div class="card-footer">
-                <span style="font-size:0.75rem; color:var(--text-muted)">Source: {{ item.source }}</span>
                 <div class="share-links">
                     <a href="https://wa.me/?text={{ item.link }}" target="_blank" class="share-icon"><i class="fab fa-whatsapp"></i></a>
                     <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ item.link }}" target="_blank" class="share-icon"><i class="fab fa-linkedin"></i></a>
@@ -259,9 +245,9 @@ HTML_TEMPLATE = """
 <script>
     // --- VARIABLES ---
     const cards = Array.from(document.querySelectorAll('.card'));
-    const itemsPerPage = 9; // Show 9 items per page
+    const itemsPerPage = 9; 
     let currentPage = 1;
-    let filteredCards = cards; // Initially all cards
+    let filteredCards = cards; 
 
     // --- 1. THEME TOGGLE ---
     const toggleBtn = document.getElementById('themeToggle');
@@ -290,7 +276,7 @@ HTML_TEMPLATE = """
     // --- 2. SOURCE FILTER GENERATION ---
     const sources = new Set();
     cards.forEach(card => sources.add(card.getAttribute('data-source')));
-    const sourceContainer = document.getElementById('sourceFilterContainer');
+    const sourceContainer = document.getElementById('dynamicSourceFilters');
     
     Array.from(sources).sort().forEach(source => {
         const btn = document.createElement('button');
@@ -302,24 +288,19 @@ HTML_TEMPLATE = """
 
     // --- 3. FILTER LOGIC ---
     function applyFilter(criteria) {
-        // Active Class Handling
         document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
         event.target.classList.add('active');
 
-        // Filter Logic
         filteredCards = cards.filter(card => {
             const source = card.getAttribute('data-source');
-            const category = card.getAttribute('data-category');
             const isZeroDay = card.getAttribute('data-zeroday') === 'true';
 
             if (criteria === 'all') return true;
             if (criteria === 'zeroday') return isZeroDay;
-            if (category === criteria) return true;
             if (source === criteria) return true;
             return false;
         });
 
-        // Reset to Page 1 and Render
         currentPage = 1;
         renderPagination();
     }
@@ -328,44 +309,37 @@ HTML_TEMPLATE = """
     function renderPagination() {
         const totalPages = Math.ceil(filteredCards.length / itemsPerPage);
         
-        // Hide all cards first
         cards.forEach(card => card.style.display = 'none');
 
-        // Calculate slice
         const start = (currentPage - 1) * itemsPerPage;
         const end = start + itemsPerPage;
         const pageItems = filteredCards.slice(start, end);
 
-        // Show only current page items
         pageItems.forEach(card => card.style.display = 'flex');
 
-        // Update Buttons
         document.getElementById('pageInfo').innerText = `Page ${currentPage} of ${totalPages || 1}`;
         document.getElementById('prevBtn').disabled = currentPage === 1;
         document.getElementById('nextBtn').disabled = currentPage >= totalPages;
         
-        // Hide pagination if no items
         document.getElementById('paginationControls').style.display = filteredCards.length > 0 ? 'flex' : 'none';
     }
 
     function changePage(direction) {
         currentPage += direction;
         renderPagination();
-        window.scrollTo(0, 0); // Scroll to top
+        window.scrollTo(0, 0); 
     }
 
     // --- 5. EXCEL EXPORT ---
     function exportToExcel() {
-        let csv = "Category,Source,Date,Title,Link,Summary\\n";
-        // Export ONLY visible filtered items (all pages of filter)
+        let csv = "Source,Date,Title,Link,Summary\\n";
         filteredCards.forEach(card => {
-            const cat = card.getAttribute('data-category');
             const src = card.getAttribute('data-source');
             const date = card.querySelector('.meta span:last-child').innerText.replace('| ', '');
             const title = card.querySelector('h2 a').innerText.replace(/,/g, '');
             const link = card.querySelector('h2 a').href;
             const sum = card.querySelector('.summary').innerText.replace(/\\n/g, ' ').replace(/,/g, '');
-            csv += `${cat},${src},${date},${title},${link},"${sum}"\\n`;
+            csv += `${src},${date},${title},${link},"${sum}"\\n`;
         });
         const link = document.createElement("a");
         link.href = encodeURI("data:text/csv;charset=utf-8," + csv);
@@ -375,7 +349,6 @@ HTML_TEMPLATE = """
         document.body.removeChild(link);
     }
 
-    // Initial Render
     renderPagination();
 
 </script>
@@ -393,14 +366,6 @@ def clean_html(raw_html):
     if len(cleantext) > 400:
         return cleantext[:400].rsplit(' ', 1)[0] + "..."
     return cleantext.strip()
-
-def determine_category(source_name):
-    """Map source name to a specific category."""
-    for category, keywords in CATEGORY_MAP.items():
-        for keyword in keywords:
-            if keyword.lower() in source_name.lower():
-                return category
-    return "News"  # Default category
 
 def load_history():
     """Load existing articles from JSON."""
@@ -432,7 +397,6 @@ def fetch_rss_feeds():
             feed = feedparser.parse(url)
             # Safe get for source title
             source_name = feed.feed.get('title', 'Unknown Source')[:20]
-            category = determine_category(source_name)
 
             for entry in feed.entries:
                 # Parse date
@@ -452,7 +416,6 @@ def fetch_rss_feeds():
                     
                     articles.append({
                         "source": source_name,
-                        "category": category,
                         "title": title,
                         "link": entry.link,
                         "raw_summary": clean_summary,
@@ -487,7 +450,7 @@ def process_ai_summaries(new_articles):
             try:
                 print(f"    [{count}/{total}] Summarizing: {article['title'][:30]}...")
                 context = "CRITICAL VULNERABILITY! " if article['is_zeroday'] else ""
-                # Improved Prompt: Explicitly ask for full sentences
+                # Explicitly ask for full sentences
                 prompt = (f"{context}Summarize this cybersecurity news in English. "
                           f"Provide exactly one complete, technical paragraph. Do not cut off sentences. "
                           f"Max 50 words. News: {article['title']} - {article['raw_summary']}")
