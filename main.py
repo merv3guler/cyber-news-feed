@@ -6,6 +6,7 @@ from jinja2 import Template
 import google.generativeai as genai
 import time
 import json
+import re
 
 # --- CONFIGURATION ---
 RSS_FEEDS = [
@@ -28,7 +29,7 @@ HTML_TEMPLATE = """
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cyber Threat Intel | Merve Guler</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root {
             /* DARK MODE (DEFAULT) */
@@ -289,6 +290,11 @@ HTML_TEMPLATE = """
             color: var(--accent);
             transform: scale(1.1);
         }
+        
+        /* X (Twitter) Icon Hover Color */
+        .share-icon:hover .fa-x-twitter {
+            color: var(--text-main); /* X logosu genelde siyah/beyaz kalır */
+        }
 
         footer {
             margin-top: 50px;
@@ -383,18 +389,18 @@ HTML_TEMPLATE = """
     if (localStorage.getItem('theme') === 'light') {
         body.classList.add('light-mode');
         icon.classList.replace('fa-sun', 'fa-moon');
-        icon.style.color = ""; // Reset color for moon
+        icon.style.color = ""; 
     }
 
     toggleBtn.addEventListener('click', () => {
         body.classList.toggle('light-mode');
         if (body.classList.contains('light-mode')) {
             icon.classList.replace('fa-sun', 'fa-moon');
-            icon.style.color = ""; // Moon color is default text color
+            icon.style.color = ""; 
             localStorage.setItem('theme', 'light');
         } else {
             icon.classList.replace('fa-moon', 'fa-sun');
-            icon.style.color = "#f39c12"; // Restore Sun color
+            icon.style.color = "#f39c12"; 
             localStorage.setItem('theme', 'dark');
         }
     });
@@ -406,7 +412,6 @@ HTML_TEMPLATE = """
 
     const filterContainer = document.getElementById('filterContainer');
     
-    // Sort sources alphabetically and create buttons
     Array.from(sources).sort().forEach(source => {
         const btn = document.createElement('button');
         btn.innerText = source;
@@ -417,7 +422,6 @@ HTML_TEMPLATE = """
 
     function filterNews(criteria) {
         document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-        // Find the button that was clicked and add active class (simple check)
         event.target.classList.add('active');
 
         cards.forEach(card => {
@@ -437,7 +441,7 @@ HTML_TEMPLATE = """
     // --- 3. EXCEL EXPORT (ENGLISH) ---
     function exportToExcel() {
         let csvContent = "data:text/csv;charset=utf-8,";
-        csvContent += "Source,Date,Title,Link,Summary\\n"; // English Headers
+        csvContent += "Source,Date,Title,Link,Summary\\n"; 
 
         cards.forEach(card => {
             if (card.style.display !== 'none') {
@@ -477,14 +481,12 @@ def load_existing_articles():
 
 def save_articles(articles):
     """Save all articles to JSON file."""
-    # Ensure data directory exists
     os.makedirs(os.path.dirname(DATA_FILE), exist_ok=True)
     with open(DATA_FILE, 'w', encoding='utf-8') as f:
         json.dump(articles, f, ensure_ascii=False, indent=4)
 
 def fetch_news():
     articles = []
-    # We scrape last 24h to find NEW content
     utc_now = datetime.now(pytz.utc)
     time_limit = utc_now - timedelta(hours=24)
     
@@ -512,11 +514,11 @@ def fetch_news():
                         "title": title,
                         "link": entry.link,
                         "raw_summary": summary,
-                        "summary": "", # Will be filled by AI
+                        "summary": "",
                         "date": pub_date.strftime("%Y-%m-%d %H:%M"),
-                        "timestamp": pub_date.isoformat(), # String for JSON
+                        "timestamp": pub_date.isoformat(),
                         "is_zeroday": is_zeroday,
-                        "processed": False # Flag to check if AI processed it
+                        "processed": False 
                     })
         except Exception as e:
             print(f"Error ({url}): {e}")
@@ -533,7 +535,6 @@ def summarize_with_gemini(new_articles):
 
     print("Running Gemini AI analysis on new items...")
     for article in new_articles:
-        # Only process if not already processed
         if not article.get('processed'):
             try:
                 context = "CRITICAL VULNERABILITY! " if article['is_zeroday'] else ""
@@ -541,8 +542,8 @@ def summarize_with_gemini(new_articles):
                 
                 response = model.generate_content(prompt)
                 article['summary'] = response.text
-                article['processed'] = True # Mark as done
-                time.sleep(4) # Rate limit protection
+                article['processed'] = True 
+                time.sleep(4) 
             except Exception as e:
                 print(f"AI Error: {e}")
                 article['summary'] = article['raw_summary']
@@ -550,37 +551,24 @@ def summarize_with_gemini(new_articles):
     return new_articles
 
 def main():
-    # 1. Load History
     existing_articles = load_existing_articles()
     existing_links = {item['link'] for item in existing_articles}
 
-    # 2. Fetch Fresh News
     fresh_articles = fetch_news()
     
-    # 3. Filter Duplicates (Only keep what's NOT in history)
     new_unique_articles = [art for art in fresh_articles if art['link'] not in existing_links]
     
     if new_unique_articles:
         print(f"Found {len(new_unique_articles)} new articles.")
-        # 4. Summarize ONLY new articles
         processed_articles = summarize_with_gemini(new_unique_articles)
-        
-        # 5. Merge with History
         all_articles = processed_articles + existing_articles
-        
-        # Sort by date (Newest first)
         all_articles.sort(key=lambda x: x['timestamp'], reverse=True)
-        
-        # Keep manageable size (optional, e.g., keep last 500)
         all_articles = all_articles[:500]
-        
-        # 6. Save back to JSON
         save_articles(all_articles)
     else:
         print("No new articles found.")
         all_articles = existing_articles
 
-    # 7. Generate HTML
     template = Template(HTML_TEMPLATE)
     output_html = template.render(
         items=all_articles,
