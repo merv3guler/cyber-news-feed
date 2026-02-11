@@ -15,7 +15,7 @@ RSS_FEEDS = [
     "https://threatpost.com/feed/"
 ]
 
-GITHUB_PROFILE = "https://github.com/GITHUB_KULLANICI_ADIN" 
+GITHUB_PROFILE = "https://github.com/merv3guler" 
 
 # --- HTML ŞABLONU ---
 HTML_TEMPLATE = """
