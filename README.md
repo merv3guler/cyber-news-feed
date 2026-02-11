@@ -1,8 +1,6 @@
-# cyber-news-feed
-
 # 🛡️ Cyber Threat Intelligence Feed
 
-[![Website](https://img.shields.io/website?url=https%3A%2F%2Fmerv3guler.github.io%2Frepo-adi&label=Live%20Feed&style=flat-square&color=2ea44f)](https://merv3guler.github.io/repo-adi)
+[![Website](https://img.shields.io/website?url=https%3A%2F%2Fmerv3guler.github.io%2Frepo-adi&label=Live%20Feed&style=flat-square&color=2ea44f)](https://merv3guler.github.io/cyber-news-feed)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue?style=flat-square&logo=python)
 ![AI Powered](https://img.shields.io/badge/AI-Gemini%201.5%20Flash-orange?style=flat-square&logo=google)
 
