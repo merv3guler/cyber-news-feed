@@ -13,18 +13,21 @@ GITHUB_REPO = "https://github.com/merv3guler/cyber-news-feed"
 DATA_FILE = "data/articles.json"
 MAX_HISTORY = 600
 
+# GÜNCELLENMİŞ DEV KAYNAK LİSTESİ
 RSS_FEEDS = [
     "https://feeds.feedburner.com/TheHackersNews",
     "https://www.bleepingcomputer.com/feed/",
-    "https://www.theregister.com/security/headlines.atom",
     "https://www.cisa.gov/uscert/ncas/alerts.xml",
+    "https://feeds.feedburner.com/GoogleOnlineSecurityBlog",
+    "https://www.theregister.com/security/headlines.atom",
     "https://isc.sans.edu/rssfeed_full.xml",
     "https://krebsonsecurity.com/feed/",
     "https://www.schneier.com/feed/atom/",
-    "https://googleprojectzero.blogspot.com/feeds/posts/default",
+    "https://unit42.paloaltonetworks.com/feed/",
     "https://blog.trendmicro.com/category/trendlabs-security-intelligence/feed/",
     "https://www.darkreading.com/rss.xml",
-    "https://threatpost.com/feed/"
+    "https://threatpost.com/feed/",
+    "https://www.exploit-db.com/rss.xml"
 ]
 
 # --- 2. HTML TEMPLATE (Frontend) ---
@@ -49,7 +52,7 @@ HTML_TEMPLATE = """
             --accent-glow: rgba(0, 255, 65, 0.2);
             --danger: #ff003c;
             --sun-color: #f39c12;
-            --source-badge-bg: #1f6feb; /* Blue for source badges */
+            --source-badge-bg: #1f6feb;
         }
 
         body.light-mode {
@@ -96,7 +99,6 @@ HTML_TEMPLATE = """
         /* FILTERS */
         .controls-bar { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; }
         
-        /* Merged Filter Group */
         .filter-container {
             display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
         }
@@ -117,7 +119,7 @@ HTML_TEMPLATE = """
         .card {
             background-color: var(--card-bg); border: 1px solid var(--border); border-radius: 6px;
             padding: 20px; display: flex; flex-direction: column; position: relative;
-            transition: transform 0.2s; overflow: hidden; border-left: 4px solid var(--accent); /* Default Border */
+            transition: transform 0.2s; overflow: hidden; border-left: 4px solid var(--accent);
         }
         .card:hover { transform: translateX(5px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); border-color: var(--accent); }
         
@@ -130,7 +132,6 @@ HTML_TEMPLATE = """
 
         .meta { display: flex; gap: 15px; margin-bottom: 8px; font-size: 0.75rem; font-family: 'JetBrains Mono'; align-items: center;}
         
-        /* Source is now the main badge */
         .source-badge { 
             font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;
             color: var(--source-badge-bg);
@@ -145,7 +146,7 @@ HTML_TEMPLATE = """
 
         .card-footer {
             border-top: 1px solid var(--border); padding-top: 12px;
-            display: flex; justify-content: flex-end; align-items: center; /* Changed to flex-end as source is now at top */
+            display: flex; justify-content: flex-end; align-items: center;
         }
         .share-links { display: flex; gap: 15px; }
         .share-icon { color: var(--text-muted); font-size: 1.1rem; transition: 0.2s; }
