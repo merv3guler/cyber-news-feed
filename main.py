@@ -10,10 +10,23 @@ import re
 
 # --- CONFIGURATION ---
 RSS_FEEDS = [
+    # Global Cybersecurity News
     "https://feeds.feedburner.com/TheHackersNews",
     "https://www.bleepingcomputer.com/feed/",
+    "https://www.theregister.com/security/headlines.atom",
+    
+    # Official Alerts & Government Advisories
     "https://www.cisa.gov/uscert/ncas/alerts.xml",
+    "https://isc.sans.edu/rssfeed_full.xml", # SANS Internet Storm Center
+    
+    # Threat Intelligence & Deep Dive Research
     "https://krebsonsecurity.com/feed/",
+    "https://www.schneier.com/feed/atom/", # Bruce Schneier
+    "https://googleprojectzero.blogspot.com/feeds/posts/default", # Google Project Zero (Deep Technical)
+    "https://blog.trendmicro.com/category/trendlabs-security-intelligence/feed/",
+    
+    # Vulnerabilities, Exploits & Patch Management
+    "https://www.darkreading.com/rss.xml",
     "https://threatpost.com/feed/"
 ]
 
@@ -291,9 +304,8 @@ HTML_TEMPLATE = """
             transform: scale(1.1);
         }
         
-        /* X (Twitter) Icon Hover Color */
         .share-icon:hover .fa-x-twitter {
-            color: var(--text-main); /* X logosu genelde siyah/beyaz kalır */
+            color: var(--text-main);
         }
 
         footer {
@@ -332,7 +344,7 @@ HTML_TEMPLATE = """
         <div class="filters" id="filterContainer">
             <button class="filter-btn active" onclick="filterNews('all')">All</button>
             <button class="filter-btn zeroday-btn" onclick="filterNews('zeroday')">Zero Day</button>
-            </div>
+        </div>
         <button class="export-btn" onclick="exportToExcel()">
             <i class="fas fa-file-excel"></i> Export Report
         </button>
@@ -438,7 +450,7 @@ HTML_TEMPLATE = """
         });
     }
 
-    // --- 3. EXCEL EXPORT (ENGLISH) ---
+    // --- 3. EXCEL EXPORT ---
     function exportToExcel() {
         let csvContent = "data:text/csv;charset=utf-8,";
         csvContent += "Source,Date,Title,Link,Summary\\n"; 
@@ -488,6 +500,7 @@ def save_articles(articles):
 def fetch_news():
     articles = []
     utc_now = datetime.now(pytz.utc)
+    # Fetch last 24h
     time_limit = utc_now - timedelta(hours=24)
     
     print("Scanning feeds...")
@@ -543,7 +556,7 @@ def summarize_with_gemini(new_articles):
                 response = model.generate_content(prompt)
                 article['summary'] = response.text
                 article['processed'] = True 
-                time.sleep(4) 
+                time.sleep(12) # SAFE DELAY 12 SECONDS
             except Exception as e:
                 print(f"AI Error: {e}")
                 article['summary'] = article['raw_summary']
