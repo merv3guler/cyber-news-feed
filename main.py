@@ -5,9 +5,9 @@ from datetime import datetime, timedelta
 from jinja2 import Template
 import google.generativeai as genai
 import time
-import re
+import json
 
-# --- AYARLAR ---
+# --- CONFIGURATION ---
 RSS_FEEDS = [
     "https://feeds.feedburner.com/TheHackersNews",
     "https://www.bleepingcomputer.com/feed/",
@@ -16,16 +16,17 @@ RSS_FEEDS = [
     "https://threatpost.com/feed/"
 ]
 
-GITHUB_PROFILE = "https://github.com/merv3guler" 
+GITHUB_PROFILE = "https://github.com/merv3guler"
+DATA_FILE = "data/articles.json"
 
-# --- HTML ŞABLONU ---
+# --- HTML TEMPLATE ---
 HTML_TEMPLATE = """
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyber Threat Intel | Merve Güler</title>
+    <title>Cyber Threat Intel | Merve Guler</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -39,7 +40,7 @@ HTML_TEMPLATE = """
             --accent: #00ff41; /* MATRIX GREEN */
             --accent-glow: rgba(0, 255, 65, 0.2);
             --danger: #ff003c;
-            --panel-bg: #0d1117;
+            --sun-color: #f39c12; /* ORANGE/YELLOW SUN */
         }
 
         /* LIGHT MODE VARIABLES */
@@ -49,9 +50,8 @@ HTML_TEMPLATE = """
             --text-main: #24292f;
             --text-muted: #57606a;
             --border: #d0d7de;
-            --accent: #1f883d; /* DARKER GREEN FOR READABILITY */
+            --accent: #1f883d;
             --accent-glow: rgba(31, 136, 61, 0.1);
-            --panel-bg: #ffffff;
         }
 
         body {
@@ -110,7 +110,13 @@ HTML_TEMPLATE = """
             box-shadow: 0 0 10px var(--accent-glow);
         }
 
-        /* CONTROLS BAR (FILTER & EXPORT) */
+        /* SUN ICON SPECIFIC */
+        .fa-sun {
+            color: var(--sun-color);
+            filter: drop-shadow(0 0 3px var(--sun-color));
+        }
+
+        /* CONTROLS BAR */
         .controls-bar {
             display: flex;
             flex-wrap: wrap;
@@ -143,6 +149,16 @@ HTML_TEMPLATE = """
             color: #000;
             border-color: var(--accent);
             font-weight: bold;
+        }
+        
+        .filter-btn.zeroday-btn {
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+        
+        .filter-btn.zeroday-btn:hover, .filter-btn.zeroday-btn.active {
+            background-color: var(--danger);
+            color: #fff;
         }
 
         .export-btn {
@@ -189,7 +205,6 @@ HTML_TEMPLATE = """
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
 
-        /* ZERO DAY ALERT */
         .zeroday-banner {
             background-color: var(--danger);
             color: #fff;
@@ -260,12 +275,12 @@ HTML_TEMPLATE = """
             padding-top: 15px;
             display: flex;
             justify-content: flex-end;
-            gap: 10px;
+            gap: 15px;
         }
 
         .share-icon {
             color: var(--text-muted);
-            font-size: 1rem;
+            font-size: 1.1rem;
             text-decoration: none;
             transition: 0.2s;
         }
@@ -275,7 +290,6 @@ HTML_TEMPLATE = """
             transform: scale(1.1);
         }
 
-        /* FOOTER */
         footer {
             margin-top: 50px;
             text-align: center;
@@ -286,7 +300,6 @@ HTML_TEMPLATE = """
 
         .heart { color: #ff003c; animation: beat 1s infinite alternate; display: inline-block; }
         @keyframes beat { to { transform: scale(1.1); } }
-
     </style>
 </head>
 <body>
@@ -300,10 +313,10 @@ HTML_TEMPLATE = """
             </small>
         </div>
         <div class="header-controls">
-            <button class="icon-btn" id="themeToggle" title="Gece/Gündüz Modu">
+            <button class="icon-btn" id="themeToggle" title="Toggle Theme">
                 <i class="fas fa-sun"></i>
             </button>
-            <a href="{{ github_profile }}" target="_blank" class="icon-btn" title="GitHub Profilim">
+            <a href="{{ github_profile }}" target="_blank" class="icon-btn" title="GitHub Profile">
                 <i class="fab fa-github"></i>
             </a>
         </div>
@@ -311,16 +324,17 @@ HTML_TEMPLATE = """
 
     <div class="controls-bar">
         <div class="filters" id="filterContainer">
-            <button class="filter-btn active" onclick="filterNews('all')">Tümü</button>
+            <button class="filter-btn active" onclick="filterNews('all')">All</button>
+            <button class="filter-btn zeroday-btn" onclick="filterNews('zeroday')">Zero Day</button>
             </div>
         <button class="export-btn" onclick="exportToExcel()">
-            <i class="fas fa-file-excel"></i> Raporu İndir (Excel)
+            <i class="fas fa-file-excel"></i> Export Report
         </button>
     </div>
 
     <div class="grid" id="newsGrid">
         {% for item in items %}
-        <article class="card" data-source="{{ item.source }}">
+        <article class="card" data-source="{{ item.source }}" data-zeroday="{{ 'true' if item.is_zeroday else 'false' }}">
             {% if item.is_zeroday %}
             <div class="zeroday-banner">⚠️ ZERO-DAY DETECTED</div>
             {% endif %}
@@ -337,16 +351,16 @@ HTML_TEMPLATE = """
             </div>
 
             <div class="card-footer">
-                <a href="https://wa.me/?text=İncele: {{ item.link }}" target="_blank" class="share-icon" title="WhatsApp">
+                <a href="https://wa.me/?text=Check this out: {{ item.link }}" target="_blank" class="share-icon" title="Share on WhatsApp">
                     <i class="fab fa-whatsapp"></i>
                 </a>
-                <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ item.link }}" target="_blank" class="share-icon" title="LinkedIn">
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ item.link }}" target="_blank" class="share-icon" title="Share on LinkedIn">
                     <i class="fab fa-linkedin"></i>
                 </a>
-                <a href="https://twitter.com/intent/tweet?text={{ item.title }}&url={{ item.link }}" target="_blank" class="share-icon" title="X / Twitter">
+                <a href="https://twitter.com/intent/tweet?text=Cyber Security Alert: {{ item.title }}&url={{ item.link }}" target="_blank" class="share-icon" title="Share on X">
                     <i class="fa-brands fa-x-twitter"></i>
                 </a>
-                <a href="mailto:?subject=Siber İstihbarat Raporu&body=Bu haberi görmelisin: {{ item.title }} - {{ item.link }}" class="share-icon" title="Email">
+                <a href="mailto:?subject=Cyber Intelligence Report&body=I thought this might interest you: {{ item.title }} - {{ item.link }}" class="share-icon" title="Send via Email">
                     <i class="fas fa-envelope"></i>
                 </a>
             </div>
@@ -355,7 +369,7 @@ HTML_TEMPLATE = """
     </div>
 
     <footer>
-        Developed by <a href="{{ github_profile }}" style="color:var(--text-main);text-decoration:none;font-weight:bold;">Merve Güler</a> 
+        Developed by <a href="{{ github_profile }}" style="color:var(--text-main);text-decoration:none;font-weight:bold;">Merve Guler</a> 
         <span class="heart">🩷</span>
     </footer>
 </div>
@@ -366,31 +380,34 @@ HTML_TEMPLATE = """
     const icon = toggleBtn.querySelector('i');
     const body = document.body;
 
-    // Tercihi Hatırla
     if (localStorage.getItem('theme') === 'light') {
         body.classList.add('light-mode');
         icon.classList.replace('fa-sun', 'fa-moon');
+        icon.style.color = ""; // Reset color for moon
     }
 
     toggleBtn.addEventListener('click', () => {
         body.classList.toggle('light-mode');
         if (body.classList.contains('light-mode')) {
             icon.classList.replace('fa-sun', 'fa-moon');
+            icon.style.color = ""; // Moon color is default text color
             localStorage.setItem('theme', 'light');
         } else {
             icon.classList.replace('fa-moon', 'fa-sun');
+            icon.style.color = "#f39c12"; // Restore Sun color
             localStorage.setItem('theme', 'dark');
         }
     });
 
-    // --- 2. KATEGORİ FİLTRELEME ---
-    // Sayfadaki tüm kaynakları bul ve butonları oluştur
+    // --- 2. FILTERS ---
     const cards = document.querySelectorAll('.card');
     const sources = new Set();
     cards.forEach(card => sources.add(card.getAttribute('data-source')));
 
     const filterContainer = document.getElementById('filterContainer');
-    sources.forEach(source => {
+    
+    // Sort sources alphabetically and create buttons
+    Array.from(sources).sort().forEach(source => {
         const btn = document.createElement('button');
         btn.innerText = source;
         btn.className = 'filter-btn';
@@ -398,32 +415,35 @@ HTML_TEMPLATE = """
         filterContainer.appendChild(btn);
     });
 
-    function filterNews(source) {
-        // Aktif buton rengini ayarla
+    function filterNews(criteria) {
         document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        // Find the button that was clicked and add active class (simple check)
         event.target.classList.add('active');
 
-        // Kartları gizle/göster
         cards.forEach(card => {
-            if (source === 'all' || card.getAttribute('data-source') === source) {
+            const source = card.getAttribute('data-source');
+            const isZeroDay = card.getAttribute('data-zeroday') === 'true';
+
+            if (criteria === 'all') {
                 card.style.display = 'flex';
+            } else if (criteria === 'zeroday') {
+                card.style.display = isZeroDay ? 'flex' : 'none';
             } else {
-                card.style.display = 'none';
+                card.style.display = source === criteria ? 'flex' : 'none';
             }
         });
     }
 
-    // --- 3. EXCEL EXPORT ---
+    // --- 3. EXCEL EXPORT (ENGLISH) ---
     function exportToExcel() {
         let csvContent = "data:text/csv;charset=utf-8,";
-        csvContent += "Kaynak,Tarih,Baslik,Link,Ozet\\n"; // Başlıklar
+        csvContent += "Source,Date,Title,Link,Summary\\n"; // English Headers
 
         cards.forEach(card => {
-            // Sadece görünür olanları indir (Filtreye saygı duy)
             if (card.style.display !== 'none') {
                 const source = card.getAttribute('data-source');
                 const date = card.querySelector('.meta span:last-child').innerText;
-                const title = card.querySelector('h2 a').innerText.replace(/,/g, ''); // Virgülleri temizle
+                const title = card.querySelector('h2 a').innerText.replace(/,/g, '');
                 const link = card.querySelector('h2 a').href;
                 const summary = card.querySelector('.summary').innerText.replace(/\\n/g, ' ').replace(/,/g, '');
                 
@@ -434,7 +454,7 @@ HTML_TEMPLATE = """
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
         link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "siber_istihbarat_raporu.csv");
+        link.setAttribute("download", "cyber_intel_report.csv");
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -445,14 +465,31 @@ HTML_TEMPLATE = """
 </html>
 """
 
+def load_existing_articles():
+    """Load existing articles from JSON file to keep history."""
+    if os.path.exists(DATA_FILE):
+        try:
+            with open(DATA_FILE, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except:
+            return []
+    return []
+
+def save_articles(articles):
+    """Save all articles to JSON file."""
+    # Ensure data directory exists
+    os.makedirs(os.path.dirname(DATA_FILE), exist_ok=True)
+    with open(DATA_FILE, 'w', encoding='utf-8') as f:
+        json.dump(articles, f, ensure_ascii=False, indent=4)
+
 def fetch_news():
     articles = []
+    # We scrape last 24h to find NEW content
     utc_now = datetime.now(pytz.utc)
     time_limit = utc_now - timedelta(hours=24)
-    print("Haberler taranıyor...")
     
-    # Sıfırıncı gün tespiti için anahtar kelimeler
-    zeroday_keywords = ['0-day', 'zero-day', 'zero day', 'exploit', 'cve-', 'critical']
+    print("Scanning feeds...")
+    zeroday_keywords = ['0-day', 'zero-day', 'zero day', 'exploit', 'cve-', 'critical', 'vulnerability']
 
     for url in RSS_FEEDS:
         try:
@@ -463,11 +500,11 @@ def fetch_news():
                     pub_date = datetime(*entry.published_parsed[:6], tzinfo=pytz.utc)
                 else:
                     continue
+                
                 if pub_date > time_limit:
                     title = entry.title
                     summary = entry.get('summary', '')[:400]
                     
-                    # Zero Day Tespiti
                     is_zeroday = any(k in title.lower() or k in summary.lower() for k in zeroday_keywords)
                     
                     articles.append({
@@ -475,54 +512,85 @@ def fetch_news():
                         "title": title,
                         "link": entry.link,
                         "raw_summary": summary,
-                        "date": pub_date.strftime("%H:%M"),
-                        "timestamp": pub_date,
-                        "is_zeroday": is_zeroday
+                        "summary": "", # Will be filled by AI
+                        "date": pub_date.strftime("%Y-%m-%d %H:%M"),
+                        "timestamp": pub_date.isoformat(), # String for JSON
+                        "is_zeroday": is_zeroday,
+                        "processed": False # Flag to check if AI processed it
                     })
         except Exception as e:
-            print(f"Hata ({url}): {e}")
-    return sorted(articles, key=lambda x: x['timestamp'], reverse=True)
+            print(f"Error ({url}): {e}")
+    return articles
 
-def summarize_with_gemini(articles):
+def summarize_with_gemini(new_articles):
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
-        print("API Key yok, özetleme geçiliyor.")
-        return articles
+        print("No API Key found.")
+        return new_articles
 
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel('gemini-1.5-flash')
 
-    print("Gemini AI Analizi yapılıyor...")
-    for article in articles:
-        try:
-            # Zero-Day ise promptu değiştir
-            context = "KRİTİK ZAFİYET! " if article['is_zeroday'] else ""
-            prompt = f"{context}Bu siber güvenlik haberini Türkçe olarak tek bir paragrafta, teknik ve net bir dille özetle. (Max 35 kelime). Haber: {article['title']} - {article['raw_summary']}"
+    print("Running Gemini AI analysis on new items...")
+    for article in new_articles:
+        # Only process if not already processed
+        if not article.get('processed'):
+            try:
+                context = "CRITICAL VULNERABILITY! " if article['is_zeroday'] else ""
+                prompt = f"{context}Summarize this cybersecurity news in English in one technical, concise paragraph (Max 35 words). News: {article['title']} - {article['raw_summary']}"
+                
+                response = model.generate_content(prompt)
+                article['summary'] = response.text
+                article['processed'] = True # Mark as done
+                time.sleep(4) # Rate limit protection
+            except Exception as e:
+                print(f"AI Error: {e}")
+                article['summary'] = article['raw_summary']
             
-            response = model.generate_content(prompt)
-            article['summary'] = response.text
-            time.sleep(10) # 10 Saniye Kuralı (Garanti)
-        except Exception as e:
-            print(f"AI Hatası: {e}")
-            article['summary'] = article['raw_summary']
-            
-    return articles
+    return new_articles
 
 def main():
-    news = fetch_news()
-    if news:
-        news = summarize_with_gemini(news)
+    # 1. Load History
+    existing_articles = load_existing_articles()
+    existing_links = {item['link'] for item in existing_articles}
+
+    # 2. Fetch Fresh News
+    fresh_articles = fetch_news()
     
+    # 3. Filter Duplicates (Only keep what's NOT in history)
+    new_unique_articles = [art for art in fresh_articles if art['link'] not in existing_links]
+    
+    if new_unique_articles:
+        print(f"Found {len(new_unique_articles)} new articles.")
+        # 4. Summarize ONLY new articles
+        processed_articles = summarize_with_gemini(new_unique_articles)
+        
+        # 5. Merge with History
+        all_articles = processed_articles + existing_articles
+        
+        # Sort by date (Newest first)
+        all_articles.sort(key=lambda x: x['timestamp'], reverse=True)
+        
+        # Keep manageable size (optional, e.g., keep last 500)
+        all_articles = all_articles[:500]
+        
+        # 6. Save back to JSON
+        save_articles(all_articles)
+    else:
+        print("No new articles found.")
+        all_articles = existing_articles
+
+    # 7. Generate HTML
     template = Template(HTML_TEMPLATE)
     output_html = template.render(
-        items=news,
-        last_updated=datetime.now().strftime("%d.%m.%Y %H:%M UTC"),
+        items=all_articles,
+        last_updated=datetime.now().strftime("%Y-%m-%d %H:%M UTC"),
         github_profile=GITHUB_PROFILE
     )
     
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(output_html)
-    print("index.html başarıyla oluşturuldu.")
+    print("index.html created successfully.")
 
 if __name__ == "__main__":
     main()
