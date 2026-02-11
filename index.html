@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cyber Threat Intel | Merve Guler</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root {
             /* DARK MODE (DEFAULT) */
@@ -267,6 +267,11 @@
             color: var(--accent);
             transform: scale(1.1);
         }
+        
+        /* X (Twitter) Icon Hover Color */
+        .share-icon:hover .fa-x-twitter {
+            color: var(--text-main); /* X logosu genelde siyah/beyaz kalır */
+        }
 
         footer {
             margin-top: 50px;
@@ -287,7 +292,7 @@
         <div>
             <h1>/// CYBER_INTEL_FEED</h1>
             <small style="font-family: 'JetBrains Mono'; color: var(--text-muted);">
-                System Status: <span style="color:var(--accent)">ONLINE</span> | 2026-02-11 13:35 UTC
+                System Status: <span style="color:var(--accent)">ONLINE</span> | 2026-02-11 13:47 UTC
             </small>
         </div>
         <div class="header-controls">
@@ -525,6 +530,38 @@ Of the 59 flaws, five are rated Critical, 52 are rated Important, and two are ra
                     <i class="fa-brands fa-x-twitter"></i>
                 </a>
                 <a href="mailto:?subject=Cyber Intelligence Report&body=I thought this might interest you: North Korean hackers use new macOS malware in crypto-theft attacks - https://www.bleepingcomputer.com/news/security/north-korean-hackers-use-new-macos-malware-in-crypto-theft-attacks/" class="share-icon" title="Send via Email">
+                    <i class="fas fa-envelope"></i>
+                </a>
+            </div>
+        </article>
+        
+        <article class="card" data-source="Krebs on Security" data-zeroday="true">
+            
+            <div class="zeroday-banner">⚠️ ZERO-DAY DETECTED</div>
+            
+            
+            <div class="meta">
+                <span class="source-badge">Krebs on Security</span>
+                <span>2026-02-10 21:49</span>
+            </div>
+            
+            <h2><a href="https://krebsonsecurity.com/2026/02/patch-tuesday-february-2026-edition/" target="_blank">Patch Tuesday, February 2026 Edition</a></h2>
+            
+            <div class="summary">
+                Microsoft today released updates to fix more than 50 security holes in its Windows operating systems and other software, including patches for a whopping six "zero-day" vulnerabilities that attackers are already exploiting in the wild.
+            </div>
+
+            <div class="card-footer">
+                <a href="https://wa.me/?text=Check this out: https://krebsonsecurity.com/2026/02/patch-tuesday-february-2026-edition/" target="_blank" class="share-icon" title="Share on WhatsApp">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://krebsonsecurity.com/2026/02/patch-tuesday-february-2026-edition/" target="_blank" class="share-icon" title="Share on LinkedIn">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="https://twitter.com/intent/tweet?text=Cyber Security Alert: Patch Tuesday, February 2026 Edition&url=https://krebsonsecurity.com/2026/02/patch-tuesday-february-2026-edition/" target="_blank" class="share-icon" title="Share on X">
+                    <i class="fa-brands fa-x-twitter"></i>
+                </a>
+                <a href="mailto:?subject=Cyber Intelligence Report&body=I thought this might interest you: Patch Tuesday, February 2026 Edition - https://krebsonsecurity.com/2026/02/patch-tuesday-february-2026-edition/" class="share-icon" title="Send via Email">
                     <i class="fas fa-envelope"></i>
                 </a>
             </div>
@@ -884,18 +921,18 @@ According to Picus Labs’ new Red Report 2026, which analyzed over 1.1 million 
     if (localStorage.getItem('theme') === 'light') {
         body.classList.add('light-mode');
         icon.classList.replace('fa-sun', 'fa-moon');
-        icon.style.color = ""; // Reset color for moon
+        icon.style.color = ""; 
     }
 
     toggleBtn.addEventListener('click', () => {
         body.classList.toggle('light-mode');
         if (body.classList.contains('light-mode')) {
             icon.classList.replace('fa-sun', 'fa-moon');
-            icon.style.color = ""; // Moon color is default text color
+            icon.style.color = ""; 
             localStorage.setItem('theme', 'light');
         } else {
             icon.classList.replace('fa-moon', 'fa-sun');
-            icon.style.color = "#f39c12"; // Restore Sun color
+            icon.style.color = "#f39c12"; 
             localStorage.setItem('theme', 'dark');
         }
     });
@@ -907,7 +944,6 @@ According to Picus Labs’ new Red Report 2026, which analyzed over 1.1 million 
 
     const filterContainer = document.getElementById('filterContainer');
     
-    // Sort sources alphabetically and create buttons
     Array.from(sources).sort().forEach(source => {
         const btn = document.createElement('button');
         btn.innerText = source;
@@ -918,7 +954,6 @@ According to Picus Labs’ new Red Report 2026, which analyzed over 1.1 million 
 
     function filterNews(criteria) {
         document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-        // Find the button that was clicked and add active class (simple check)
         event.target.classList.add('active');
 
         cards.forEach(card => {
@@ -938,7 +973,7 @@ According to Picus Labs’ new Red Report 2026, which analyzed over 1.1 million 
     // --- 3. EXCEL EXPORT (ENGLISH) ---
     function exportToExcel() {
         let csvContent = "data:text/csv;charset=utf-8,";
-        csvContent += "Source,Date,Title,Link,Summary\n"; // English Headers
+        csvContent += "Source,Date,Title,Link,Summary\n"; 
 
         cards.forEach(card => {
             if (card.style.display !== 'none') {
