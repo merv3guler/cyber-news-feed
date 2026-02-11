@@ -19,7 +19,7 @@
             --accent-glow: rgba(0, 255, 65, 0.2);
             --danger: #ff003c;
             --sun-color: #f39c12;
-            --source-badge-bg: #1f6feb; /* Blue for source badges */
+            --source-badge-bg: #1f6feb;
         }
 
         body.light-mode {
@@ -66,7 +66,6 @@
         /* FILTERS */
         .controls-bar { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; }
         
-        /* Merged Filter Group */
         .filter-container {
             display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
         }
@@ -87,7 +86,7 @@
         .card {
             background-color: var(--card-bg); border: 1px solid var(--border); border-radius: 6px;
             padding: 20px; display: flex; flex-direction: column; position: relative;
-            transition: transform 0.2s; overflow: hidden; border-left: 4px solid var(--accent); /* Default Border */
+            transition: transform 0.2s; overflow: hidden; border-left: 4px solid var(--accent);
         }
         .card:hover { transform: translateX(5px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); border-color: var(--accent); }
         
@@ -100,7 +99,6 @@
 
         .meta { display: flex; gap: 15px; margin-bottom: 8px; font-size: 0.75rem; font-family: 'JetBrains Mono'; align-items: center;}
         
-        /* Source is now the main badge */
         .source-badge { 
             font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;
             color: var(--source-badge-bg);
@@ -115,7 +113,7 @@
 
         .card-footer {
             border-top: 1px solid var(--border); padding-top: 12px;
-            display: flex; justify-content: flex-end; align-items: center; /* Changed to flex-end as source is now at top */
+            display: flex; justify-content: flex-end; align-items: center;
         }
         .share-links { display: flex; gap: 15px; }
         .share-icon { color: var(--text-muted); font-size: 1.1rem; transition: 0.2s; }
@@ -150,7 +148,7 @@
         <div>
             <h1>/// CYBER_INTEL_FEED</h1>
             <small style="font-family: 'JetBrains Mono'; color: var(--text-muted);">
-                Status: <span style="color:var(--accent)">ONLINE</span> | 2026-02-11 14:26 UTC
+                Status: <span style="color:var(--accent)">ONLINE</span> | 2026-02-11 14:36 UTC
             </small>
         </div>
         <div class="header-controls">
@@ -174,6 +172,29 @@
     </div>
 
     <div class="grid" id="newsGrid">
+        
+        <article class="card" 
+                 data-source="darkreading" 
+                 data-zeroday="false">
+            
+            
+            
+            <div class="meta">
+                <span class="source-badge">darkreading</span>
+                <span class="date-badge"> | 2026-02-11 14:31</span>
+            </div>
+            <h2><a href="https://www.darkreading.com/data-privacy/do-we-know-enough-about-data-populating-ai" target="_blank">AI Rising: Do We Know Enough About the Data Populating It?</a></h2>
+            <div class="summary">Organizations remain reluctant to address the fact that AI can dangerously expose business operations as well as personal data.</div>
+
+            <div class="card-footer">
+                <div class="share-links">
+                    <a href="https://wa.me/?text=https://www.darkreading.com/data-privacy/do-we-know-enough-about-data-populating-ai" target="_blank" class="share-icon"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.darkreading.com/data-privacy/do-we-know-enough-about-data-populating-ai" target="_blank" class="share-icon"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://twitter.com/intent/tweet?text=AI Rising: Do We Know Enough About the Data Populating It?&url=https://www.darkreading.com/data-privacy/do-we-know-enough-about-data-populating-ai" target="_blank" class="share-icon"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="mailto:?subject=Cyber Intel&body=AI Rising: Do We Know Enough About the Data Populating It? - https://www.darkreading.com/data-privacy/do-we-know-enough-about-data-populating-ai" class="share-icon"><i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+        </article>
         
         <article class="card" 
                  data-source="darkreading" 
@@ -480,6 +501,75 @@ Of the 59 flaws, five are rated Critical, 52 are rated Important, and two are ra
         </article>
         
         <article class="card" 
+                 data-source="Exploit-DB.com RSS F" 
+                 data-zeroday="false">
+            
+            
+            
+            <div class="meta">
+                <span class="source-badge">Exploit-DB.com RSS F</span>
+                <span class="date-badge"> | 2026-02-11 00:00</span>
+            </div>
+            <h2><a href="https://www.exploit-db.com/exploits/52481" target="_blank">[webapps] motionEye 0.43.1b4 - RCE</a></h2>
+            <div class="summary">motionEye 0.43.1b4 - RCE</div>
+
+            <div class="card-footer">
+                <div class="share-links">
+                    <a href="https://wa.me/?text=https://www.exploit-db.com/exploits/52481" target="_blank" class="share-icon"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.exploit-db.com/exploits/52481" target="_blank" class="share-icon"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://twitter.com/intent/tweet?text=[webapps] motionEye 0.43.1b4 - RCE&url=https://www.exploit-db.com/exploits/52481" target="_blank" class="share-icon"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="mailto:?subject=Cyber Intel&body=[webapps] motionEye 0.43.1b4 - RCE - https://www.exploit-db.com/exploits/52481" class="share-icon"><i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+        </article>
+        
+        <article class="card" 
+                 data-source="Exploit-DB.com RSS F" 
+                 data-zeroday="true">
+            
+            <div class="zeroday-banner">⚠️ ZERO-DAY DETECTED</div>
+            
+            <div class="meta">
+                <span class="source-badge">Exploit-DB.com RSS F</span>
+                <span class="date-badge"> | 2026-02-11 00:00</span>
+            </div>
+            <h2><a href="https://www.exploit-db.com/exploits/52480" target="_blank">[remote] Windows 10.0.17763.7009 - spoofing vulnerability</a></h2>
+            <div class="summary">Windows 10.0.17763.7009 - spoofing vulnerability</div>
+
+            <div class="card-footer">
+                <div class="share-links">
+                    <a href="https://wa.me/?text=https://www.exploit-db.com/exploits/52480" target="_blank" class="share-icon"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.exploit-db.com/exploits/52480" target="_blank" class="share-icon"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://twitter.com/intent/tweet?text=[remote] Windows 10.0.17763.7009 - spoofing vulnerability&url=https://www.exploit-db.com/exploits/52480" target="_blank" class="share-icon"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="mailto:?subject=Cyber Intel&body=[remote] Windows 10.0.17763.7009 - spoofing vulnerability - https://www.exploit-db.com/exploits/52480" class="share-icon"><i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+        </article>
+        
+        <article class="card" 
+                 data-source="Exploit-DB.com RSS F" 
+                 data-zeroday="false">
+            
+            
+            
+            <div class="meta">
+                <span class="source-badge">Exploit-DB.com RSS F</span>
+                <span class="date-badge"> | 2026-02-11 00:00</span>
+            </div>
+            <h2><a href="https://www.exploit-db.com/exploits/52479" target="_blank">[local] glibc 2.38 - Buffer Overflow</a></h2>
+            <div class="summary">glibc 2.38 - Buffer Overflow</div>
+
+            <div class="card-footer">
+                <div class="share-links">
+                    <a href="https://wa.me/?text=https://www.exploit-db.com/exploits/52479" target="_blank" class="share-icon"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.exploit-db.com/exploits/52479" target="_blank" class="share-icon"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://twitter.com/intent/tweet?text=[local] glibc 2.38 - Buffer Overflow&url=https://www.exploit-db.com/exploits/52479" target="_blank" class="share-icon"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="mailto:?subject=Cyber Intel&body=[local] glibc 2.38 - Buffer Overflow - https://www.exploit-db.com/exploits/52479" class="share-icon"><i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+        </article>
+        
+        <article class="card" 
                  data-source="BleepingComputer" 
                  data-zeroday="false">
             
@@ -498,6 +588,30 @@ Of the 59 flaws, five are rated Critical, 52 are rated Important, and two are ra
                     <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.bleepingcomputer.com/news/security/new-linux-botnet-sshstalker-uses-old-school-irc-for-c2-comms/" target="_blank" class="share-icon"><i class="fab fa-linkedin"></i></a>
                     <a href="https://twitter.com/intent/tweet?text=New Linux botnet SSHStalker uses old-school IRC for C2 comms&url=https://www.bleepingcomputer.com/news/security/new-linux-botnet-sshstalker-uses-old-school-irc-for-c2-comms/" target="_blank" class="share-icon"><i class="fa-brands fa-x-twitter"></i></a>
                     <a href="mailto:?subject=Cyber Intel&body=New Linux botnet SSHStalker uses old-school IRC for C2 comms - https://www.bleepingcomputer.com/news/security/new-linux-botnet-sshstalker-uses-old-school-irc-for-c2-comms/" class="share-icon"><i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+        </article>
+        
+        <article class="card" 
+                 data-source="Unit 42" 
+                 data-zeroday="false">
+            
+            
+            
+            <div class="meta">
+                <span class="source-badge">Unit 42</span>
+                <span class="date-badge"> | 2026-02-10 23:00</span>
+            </div>
+            <h2><a href="https://unit42.paloaltonetworks.com/muddled-libra-ops-playbook/" target="_blank">A Peek Into Muddled Libra’s Operational Playbook</a></h2>
+            <div class="summary">Explore the tools Unit 42 found on a Muddled Libra rogue host. Learn how they target domain controllers and use search engines to aid their attacks.
+The post A Peek Into Muddled Libra’s Operational Playbook appeared first on Unit 42.</div>
+
+            <div class="card-footer">
+                <div class="share-links">
+                    <a href="https://wa.me/?text=https://unit42.paloaltonetworks.com/muddled-libra-ops-playbook/" target="_blank" class="share-icon"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://unit42.paloaltonetworks.com/muddled-libra-ops-playbook/" target="_blank" class="share-icon"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://twitter.com/intent/tweet?text=A Peek Into Muddled Libra’s Operational Playbook&url=https://unit42.paloaltonetworks.com/muddled-libra-ops-playbook/" target="_blank" class="share-icon"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="mailto:?subject=Cyber Intel&body=A Peek Into Muddled Libra’s Operational Playbook - https://unit42.paloaltonetworks.com/muddled-libra-ops-playbook/" class="share-icon"><i class="fas fa-envelope"></i></a>
                 </div>
             </div>
         </article>
@@ -913,30 +1027,6 @@ Of the 59 flaws, five are rated Critical, 52 are rated Important, and two are ra
                     <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.bleepingcomputer.com/news/security/how-to-automate-aws-incident-investigation-with-tines-and-ai/" target="_blank" class="share-icon"><i class="fab fa-linkedin"></i></a>
                     <a href="https://twitter.com/intent/tweet?text=How to Automate AWS Incident Investigation with Tines and AI&url=https://www.bleepingcomputer.com/news/security/how-to-automate-aws-incident-investigation-with-tines-and-ai/" target="_blank" class="share-icon"><i class="fa-brands fa-x-twitter"></i></a>
                     <a href="mailto:?subject=Cyber Intel&body=How to Automate AWS Incident Investigation with Tines and AI - https://www.bleepingcomputer.com/news/security/how-to-automate-aws-incident-investigation-with-tines-and-ai/" class="share-icon"><i class="fas fa-envelope"></i></a>
-                </div>
-            </div>
-        </article>
-        
-        <article class="card" 
-                 data-source="The Hacker News" 
-                 data-zeroday="false">
-            
-            
-            
-            <div class="meta">
-                <span class="source-badge">The Hacker News</span>
-                <span class="date-badge"> | 2026-02-10 14:36</span>
-            </div>
-            <h2><a href="https://thehackernews.com/2026/02/reynolds-ransomware-embeds-byovd-driver.html" target="_blank">Reynolds Ransomware Embeds BYOVD Driver to Disable EDR Security Tools</a></h2>
-            <div class="summary">Cybersecurity researchers have disclosed details of an emergent ransomware family dubbed Reynolds that comes embedded with a built-in bring your own vulnerable driver (BYOVD) component for defense evasion purposes within the ransomware payload itself.
-BYOVD refers to an adversarial technique that abuses legitimate but flawed driver software to escalate privileges and disable Endpoint Detection</div>
-
-            <div class="card-footer">
-                <div class="share-links">
-                    <a href="https://wa.me/?text=https://thehackernews.com/2026/02/reynolds-ransomware-embeds-byovd-driver.html" target="_blank" class="share-icon"><i class="fab fa-whatsapp"></i></a>
-                    <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://thehackernews.com/2026/02/reynolds-ransomware-embeds-byovd-driver.html" target="_blank" class="share-icon"><i class="fab fa-linkedin"></i></a>
-                    <a href="https://twitter.com/intent/tweet?text=Reynolds Ransomware Embeds BYOVD Driver to Disable EDR Security Tools&url=https://thehackernews.com/2026/02/reynolds-ransomware-embeds-byovd-driver.html" target="_blank" class="share-icon"><i class="fa-brands fa-x-twitter"></i></a>
-                    <a href="mailto:?subject=Cyber Intel&body=Reynolds Ransomware Embeds BYOVD Driver to Disable EDR Security Tools - https://thehackernews.com/2026/02/reynolds-ransomware-embeds-byovd-driver.html" class="share-icon"><i class="fas fa-envelope"></i></a>
                 </div>
             </div>
         </article>
