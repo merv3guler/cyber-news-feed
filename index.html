@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyber Threat Intel | Merve Güler</title>
+    <title>Cyber Threat Intel | Merve Guler</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -18,7 +18,7 @@
             --accent: #00ff41; /* MATRIX GREEN */
             --accent-glow: rgba(0, 255, 65, 0.2);
             --danger: #ff003c;
-            --panel-bg: #0d1117;
+            --sun-color: #f39c12; /* ORANGE/YELLOW SUN */
         }
 
         /* LIGHT MODE VARIABLES */
@@ -28,9 +28,8 @@
             --text-main: #24292f;
             --text-muted: #57606a;
             --border: #d0d7de;
-            --accent: #1f883d; /* DARKER GREEN FOR READABILITY */
+            --accent: #1f883d;
             --accent-glow: rgba(31, 136, 61, 0.1);
-            --panel-bg: #ffffff;
         }
 
         body {
@@ -89,7 +88,13 @@
             box-shadow: 0 0 10px var(--accent-glow);
         }
 
-        /* CONTROLS BAR (FILTER & EXPORT) */
+        /* SUN ICON SPECIFIC */
+        .fa-sun {
+            color: var(--sun-color);
+            filter: drop-shadow(0 0 3px var(--sun-color));
+        }
+
+        /* CONTROLS BAR */
         .controls-bar {
             display: flex;
             flex-wrap: wrap;
@@ -122,6 +127,16 @@
             color: #000;
             border-color: var(--accent);
             font-weight: bold;
+        }
+        
+        .filter-btn.zeroday-btn {
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+        
+        .filter-btn.zeroday-btn:hover, .filter-btn.zeroday-btn.active {
+            background-color: var(--danger);
+            color: #fff;
         }
 
         .export-btn {
@@ -168,7 +183,6 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
 
-        /* ZERO DAY ALERT */
         .zeroday-banner {
             background-color: var(--danger);
             color: #fff;
@@ -239,12 +253,12 @@
             padding-top: 15px;
             display: flex;
             justify-content: flex-end;
-            gap: 10px;
+            gap: 15px;
         }
 
         .share-icon {
             color: var(--text-muted);
-            font-size: 1rem;
+            font-size: 1.1rem;
             text-decoration: none;
             transition: 0.2s;
         }
@@ -254,7 +268,6 @@
             transform: scale(1.1);
         }
 
-        /* FOOTER */
         footer {
             margin-top: 50px;
             text-align: center;
@@ -265,7 +278,6 @@
 
         .heart { color: #ff003c; animation: beat 1s infinite alternate; display: inline-block; }
         @keyframes beat { to { transform: scale(1.1); } }
-
     </style>
 </head>
 <body>
@@ -275,14 +287,14 @@
         <div>
             <h1>/// CYBER_INTEL_FEED</h1>
             <small style="font-family: 'JetBrains Mono'; color: var(--text-muted);">
-                System Status: <span style="color:var(--accent)">ONLINE</span> | 11.02.2026 13:08 UTC
+                System Status: <span style="color:var(--accent)">ONLINE</span> | 2026-02-11 13:35 UTC
             </small>
         </div>
         <div class="header-controls">
-            <button class="icon-btn" id="themeToggle" title="Gece/Gündüz Modu">
+            <button class="icon-btn" id="themeToggle" title="Toggle Theme">
                 <i class="fas fa-sun"></i>
             </button>
-            <a href="https://github.com/merv3guler" target="_blank" class="icon-btn" title="GitHub Profilim">
+            <a href="https://github.com/merv3guler" target="_blank" class="icon-btn" title="GitHub Profile">
                 <i class="fab fa-github"></i>
             </a>
         </div>
@@ -290,21 +302,22 @@
 
     <div class="controls-bar">
         <div class="filters" id="filterContainer">
-            <button class="filter-btn active" onclick="filterNews('all')">Tümü</button>
+            <button class="filter-btn active" onclick="filterNews('all')">All</button>
+            <button class="filter-btn zeroday-btn" onclick="filterNews('zeroday')">Zero Day</button>
             </div>
         <button class="export-btn" onclick="exportToExcel()">
-            <i class="fas fa-file-excel"></i> Raporu İndir (Excel)
+            <i class="fas fa-file-excel"></i> Export Report
         </button>
     </div>
 
     <div class="grid" id="newsGrid">
         
-        <article class="card" data-source="The Hacker News">
+        <article class="card" data-source="The Hacker News" data-zeroday="false">
             
             
             <div class="meta">
                 <span class="source-badge">The Hacker News</span>
-                <span>11:30</span>
+                <span>2026-02-11 11:30</span>
             </div>
             
             <h2><a href="https://thehackernews.com/2026/02/exposed-training-open-door-for-crypto.html" target="_blank">Exposed Training Open the Door for Crypto-Mining in Fortune 500 Cloud Environments</a></h2>
@@ -315,29 +328,29 @@ The issue is not the applications themselves, but how they are often
             </div>
 
             <div class="card-footer">
-                <a href="https://wa.me/?text=İncele: https://thehackernews.com/2026/02/exposed-training-open-door-for-crypto.html" target="_blank" class="share-icon" title="WhatsApp">
+                <a href="https://wa.me/?text=Check this out: https://thehackernews.com/2026/02/exposed-training-open-door-for-crypto.html" target="_blank" class="share-icon" title="Share on WhatsApp">
                     <i class="fab fa-whatsapp"></i>
                 </a>
-                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://thehackernews.com/2026/02/exposed-training-open-door-for-crypto.html" target="_blank" class="share-icon" title="LinkedIn">
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://thehackernews.com/2026/02/exposed-training-open-door-for-crypto.html" target="_blank" class="share-icon" title="Share on LinkedIn">
                     <i class="fab fa-linkedin"></i>
                 </a>
-                <a href="https://twitter.com/intent/tweet?text=Exposed Training Open the Door for Crypto-Mining in Fortune 500 Cloud Environments&url=https://thehackernews.com/2026/02/exposed-training-open-door-for-crypto.html" target="_blank" class="share-icon" title="X / Twitter">
+                <a href="https://twitter.com/intent/tweet?text=Cyber Security Alert: Exposed Training Open the Door for Crypto-Mining in Fortune 500 Cloud Environments&url=https://thehackernews.com/2026/02/exposed-training-open-door-for-crypto.html" target="_blank" class="share-icon" title="Share on X">
                     <i class="fa-brands fa-x-twitter"></i>
                 </a>
-                <a href="mailto:?subject=Siber İstihbarat Raporu&body=Bu haberi görmelisin: Exposed Training Open the Door for Crypto-Mining in Fortune 500 Cloud Environments - https://thehackernews.com/2026/02/exposed-training-open-door-for-crypto.html" class="share-icon" title="Email">
+                <a href="mailto:?subject=Cyber Intelligence Report&body=I thought this might interest you: Exposed Training Open the Door for Crypto-Mining in Fortune 500 Cloud Environments - https://thehackernews.com/2026/02/exposed-training-open-door-for-crypto.html" class="share-icon" title="Send via Email">
                     <i class="fas fa-envelope"></i>
                 </a>
             </div>
         </article>
         
-        <article class="card" data-source="The Hacker News">
+        <article class="card" data-source="The Hacker News" data-zeroday="true">
             
             <div class="zeroday-banner">⚠️ ZERO-DAY DETECTED</div>
             
             
             <div class="meta">
                 <span class="source-badge">The Hacker News</span>
-                <span>10:22</span>
+                <span>2026-02-11 10:22</span>
             </div>
             
             <h2><a href="https://thehackernews.com/2026/02/microsoft-patches-59-vulnerabilities.html" target="_blank">Microsoft Patches 59 Vulnerabilities Including Six Actively Exploited Zero-Days</a></h2>
@@ -348,29 +361,29 @@ Of the 59 flaws, five are rated Critical, 52 are rated Important, and two are ra
             </div>
 
             <div class="card-footer">
-                <a href="https://wa.me/?text=İncele: https://thehackernews.com/2026/02/microsoft-patches-59-vulnerabilities.html" target="_blank" class="share-icon" title="WhatsApp">
+                <a href="https://wa.me/?text=Check this out: https://thehackernews.com/2026/02/microsoft-patches-59-vulnerabilities.html" target="_blank" class="share-icon" title="Share on WhatsApp">
                     <i class="fab fa-whatsapp"></i>
                 </a>
-                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://thehackernews.com/2026/02/microsoft-patches-59-vulnerabilities.html" target="_blank" class="share-icon" title="LinkedIn">
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://thehackernews.com/2026/02/microsoft-patches-59-vulnerabilities.html" target="_blank" class="share-icon" title="Share on LinkedIn">
                     <i class="fab fa-linkedin"></i>
                 </a>
-                <a href="https://twitter.com/intent/tweet?text=Microsoft Patches 59 Vulnerabilities Including Six Actively Exploited Zero-Days&url=https://thehackernews.com/2026/02/microsoft-patches-59-vulnerabilities.html" target="_blank" class="share-icon" title="X / Twitter">
+                <a href="https://twitter.com/intent/tweet?text=Cyber Security Alert: Microsoft Patches 59 Vulnerabilities Including Six Actively Exploited Zero-Days&url=https://thehackernews.com/2026/02/microsoft-patches-59-vulnerabilities.html" target="_blank" class="share-icon" title="Share on X">
                     <i class="fa-brands fa-x-twitter"></i>
                 </a>
-                <a href="mailto:?subject=Siber İstihbarat Raporu&body=Bu haberi görmelisin: Microsoft Patches 59 Vulnerabilities Including Six Actively Exploited Zero-Days - https://thehackernews.com/2026/02/microsoft-patches-59-vulnerabilities.html" class="share-icon" title="Email">
+                <a href="mailto:?subject=Cyber Intelligence Report&body=I thought this might interest you: Microsoft Patches 59 Vulnerabilities Including Six Actively Exploited Zero-Days - https://thehackernews.com/2026/02/microsoft-patches-59-vulnerabilities.html" class="share-icon" title="Send via Email">
                     <i class="fas fa-envelope"></i>
                 </a>
             </div>
         </article>
         
-        <article class="card" data-source="The Hacker News">
+        <article class="card" data-source="The Hacker News" data-zeroday="true">
             
             <div class="zeroday-banner">⚠️ ZERO-DAY DETECTED</div>
             
             
             <div class="meta">
                 <span class="source-badge">The Hacker News</span>
-                <span>09:56</span>
+                <span>2026-02-11 09:56</span>
             </div>
             
             <h2><a href="https://thehackernews.com/2026/02/sshstalker-botnet-uses-irc-c2-to.html" target="_blank">SSHStalker Botnet Uses IRC C2 to Control Linux Systems via Legacy Kernel Exploits</a></h2>
@@ -381,27 +394,27 @@ Of the 59 flaws, five are rated Critical, 52 are rated Important, and two are ra
             </div>
 
             <div class="card-footer">
-                <a href="https://wa.me/?text=İncele: https://thehackernews.com/2026/02/sshstalker-botnet-uses-irc-c2-to.html" target="_blank" class="share-icon" title="WhatsApp">
+                <a href="https://wa.me/?text=Check this out: https://thehackernews.com/2026/02/sshstalker-botnet-uses-irc-c2-to.html" target="_blank" class="share-icon" title="Share on WhatsApp">
                     <i class="fab fa-whatsapp"></i>
                 </a>
-                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://thehackernews.com/2026/02/sshstalker-botnet-uses-irc-c2-to.html" target="_blank" class="share-icon" title="LinkedIn">
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://thehackernews.com/2026/02/sshstalker-botnet-uses-irc-c2-to.html" target="_blank" class="share-icon" title="Share on LinkedIn">
                     <i class="fab fa-linkedin"></i>
                 </a>
-                <a href="https://twitter.com/intent/tweet?text=SSHStalker Botnet Uses IRC C2 to Control Linux Systems via Legacy Kernel Exploits&url=https://thehackernews.com/2026/02/sshstalker-botnet-uses-irc-c2-to.html" target="_blank" class="share-icon" title="X / Twitter">
+                <a href="https://twitter.com/intent/tweet?text=Cyber Security Alert: SSHStalker Botnet Uses IRC C2 to Control Linux Systems via Legacy Kernel Exploits&url=https://thehackernews.com/2026/02/sshstalker-botnet-uses-irc-c2-to.html" target="_blank" class="share-icon" title="Share on X">
                     <i class="fa-brands fa-x-twitter"></i>
                 </a>
-                <a href="mailto:?subject=Siber İstihbarat Raporu&body=Bu haberi görmelisin: SSHStalker Botnet Uses IRC C2 to Control Linux Systems via Legacy Kernel Exploits - https://thehackernews.com/2026/02/sshstalker-botnet-uses-irc-c2-to.html" class="share-icon" title="Email">
+                <a href="mailto:?subject=Cyber Intelligence Report&body=I thought this might interest you: SSHStalker Botnet Uses IRC C2 to Control Linux Systems via Legacy Kernel Exploits - https://thehackernews.com/2026/02/sshstalker-botnet-uses-irc-c2-to.html" class="share-icon" title="Send via Email">
                     <i class="fas fa-envelope"></i>
                 </a>
             </div>
         </article>
         
-        <article class="card" data-source="The Hacker News">
+        <article class="card" data-source="The Hacker News" data-zeroday="false">
             
             
             <div class="meta">
                 <span class="source-badge">The Hacker News</span>
-                <span>06:50</span>
+                <span>2026-02-11 06:50</span>
             </div>
             
             <h2><a href="https://thehackernews.com/2026/02/north-korea-linked-unc1069-uses-ai.html" target="_blank">North Korea-Linked UNC1069 Uses AI Lures to Attack Cryptocurrency Organizations</a></h2>
@@ -412,27 +425,27 @@ Of the 59 flaws, five are rated Critical, 52 are rated Important, and two are ra
             </div>
 
             <div class="card-footer">
-                <a href="https://wa.me/?text=İncele: https://thehackernews.com/2026/02/north-korea-linked-unc1069-uses-ai.html" target="_blank" class="share-icon" title="WhatsApp">
+                <a href="https://wa.me/?text=Check this out: https://thehackernews.com/2026/02/north-korea-linked-unc1069-uses-ai.html" target="_blank" class="share-icon" title="Share on WhatsApp">
                     <i class="fab fa-whatsapp"></i>
                 </a>
-                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://thehackernews.com/2026/02/north-korea-linked-unc1069-uses-ai.html" target="_blank" class="share-icon" title="LinkedIn">
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://thehackernews.com/2026/02/north-korea-linked-unc1069-uses-ai.html" target="_blank" class="share-icon" title="Share on LinkedIn">
                     <i class="fab fa-linkedin"></i>
                 </a>
-                <a href="https://twitter.com/intent/tweet?text=North Korea-Linked UNC1069 Uses AI Lures to Attack Cryptocurrency Organizations&url=https://thehackernews.com/2026/02/north-korea-linked-unc1069-uses-ai.html" target="_blank" class="share-icon" title="X / Twitter">
+                <a href="https://twitter.com/intent/tweet?text=Cyber Security Alert: North Korea-Linked UNC1069 Uses AI Lures to Attack Cryptocurrency Organizations&url=https://thehackernews.com/2026/02/north-korea-linked-unc1069-uses-ai.html" target="_blank" class="share-icon" title="Share on X">
                     <i class="fa-brands fa-x-twitter"></i>
                 </a>
-                <a href="mailto:?subject=Siber İstihbarat Raporu&body=Bu haberi görmelisin: North Korea-Linked UNC1069 Uses AI Lures to Attack Cryptocurrency Organizations - https://thehackernews.com/2026/02/north-korea-linked-unc1069-uses-ai.html" class="share-icon" title="Email">
+                <a href="mailto:?subject=Cyber Intelligence Report&body=I thought this might interest you: North Korea-Linked UNC1069 Uses AI Lures to Attack Cryptocurrency Organizations - https://thehackernews.com/2026/02/north-korea-linked-unc1069-uses-ai.html" class="share-icon" title="Send via Email">
                     <i class="fas fa-envelope"></i>
                 </a>
             </div>
         </article>
         
-        <article class="card" data-source="BleepingComputer">
+        <article class="card" data-source="BleepingComputer" data-zeroday="false">
             
             
             <div class="meta">
                 <span class="source-badge">BleepingComputer</span>
-                <span>02:06</span>
+                <span>2026-02-11 02:06</span>
             </div>
             
             <h2><a href="https://www.bleepingcomputer.com/news/microsoft/microsoft-releases-windows-11-26h1-for-select-and-upcoming-cpus/" target="_blank">Microsoft releases Windows 11 26H1 for select and upcoming CPUs</a></h2>
@@ -442,27 +455,27 @@ Of the 59 flaws, five are rated Critical, 52 are rated Important, and two are ra
             </div>
 
             <div class="card-footer">
-                <a href="https://wa.me/?text=İncele: https://www.bleepingcomputer.com/news/microsoft/microsoft-releases-windows-11-26h1-for-select-and-upcoming-cpus/" target="_blank" class="share-icon" title="WhatsApp">
+                <a href="https://wa.me/?text=Check this out: https://www.bleepingcomputer.com/news/microsoft/microsoft-releases-windows-11-26h1-for-select-and-upcoming-cpus/" target="_blank" class="share-icon" title="Share on WhatsApp">
                     <i class="fab fa-whatsapp"></i>
                 </a>
-                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.bleepingcomputer.com/news/microsoft/microsoft-releases-windows-11-26h1-for-select-and-upcoming-cpus/" target="_blank" class="share-icon" title="LinkedIn">
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.bleepingcomputer.com/news/microsoft/microsoft-releases-windows-11-26h1-for-select-and-upcoming-cpus/" target="_blank" class="share-icon" title="Share on LinkedIn">
                     <i class="fab fa-linkedin"></i>
                 </a>
-                <a href="https://twitter.com/intent/tweet?text=Microsoft releases Windows 11 26H1 for select and upcoming CPUs&url=https://www.bleepingcomputer.com/news/microsoft/microsoft-releases-windows-11-26h1-for-select-and-upcoming-cpus/" target="_blank" class="share-icon" title="X / Twitter">
+                <a href="https://twitter.com/intent/tweet?text=Cyber Security Alert: Microsoft releases Windows 11 26H1 for select and upcoming CPUs&url=https://www.bleepingcomputer.com/news/microsoft/microsoft-releases-windows-11-26h1-for-select-and-upcoming-cpus/" target="_blank" class="share-icon" title="Share on X">
                     <i class="fa-brands fa-x-twitter"></i>
                 </a>
-                <a href="mailto:?subject=Siber İstihbarat Raporu&body=Bu haberi görmelisin: Microsoft releases Windows 11 26H1 for select and upcoming CPUs - https://www.bleepingcomputer.com/news/microsoft/microsoft-releases-windows-11-26h1-for-select-and-upcoming-cpus/" class="share-icon" title="Email">
+                <a href="mailto:?subject=Cyber Intelligence Report&body=I thought this might interest you: Microsoft releases Windows 11 26H1 for select and upcoming CPUs - https://www.bleepingcomputer.com/news/microsoft/microsoft-releases-windows-11-26h1-for-select-and-upcoming-cpus/" class="share-icon" title="Send via Email">
                     <i class="fas fa-envelope"></i>
                 </a>
             </div>
         </article>
         
-        <article class="card" data-source="BleepingComputer">
+        <article class="card" data-source="BleepingComputer" data-zeroday="false">
             
             
             <div class="meta">
                 <span class="source-badge">BleepingComputer</span>
-                <span>23:09</span>
+                <span>2026-02-10 23:09</span>
             </div>
             
             <h2><a href="https://www.bleepingcomputer.com/news/security/new-linux-botnet-sshstalker-uses-old-school-irc-for-c2-comms/" target="_blank">New Linux botnet SSHStalker uses old-school IRC for C2 comms</a></h2>
@@ -472,27 +485,27 @@ Of the 59 flaws, five are rated Critical, 52 are rated Important, and two are ra
             </div>
 
             <div class="card-footer">
-                <a href="https://wa.me/?text=İncele: https://www.bleepingcomputer.com/news/security/new-linux-botnet-sshstalker-uses-old-school-irc-for-c2-comms/" target="_blank" class="share-icon" title="WhatsApp">
+                <a href="https://wa.me/?text=Check this out: https://www.bleepingcomputer.com/news/security/new-linux-botnet-sshstalker-uses-old-school-irc-for-c2-comms/" target="_blank" class="share-icon" title="Share on WhatsApp">
                     <i class="fab fa-whatsapp"></i>
                 </a>
-                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.bleepingcomputer.com/news/security/new-linux-botnet-sshstalker-uses-old-school-irc-for-c2-comms/" target="_blank" class="share-icon" title="LinkedIn">
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.bleepingcomputer.com/news/security/new-linux-botnet-sshstalker-uses-old-school-irc-for-c2-comms/" target="_blank" class="share-icon" title="Share on LinkedIn">
                     <i class="fab fa-linkedin"></i>
                 </a>
-                <a href="https://twitter.com/intent/tweet?text=New Linux botnet SSHStalker uses old-school IRC for C2 comms&url=https://www.bleepingcomputer.com/news/security/new-linux-botnet-sshstalker-uses-old-school-irc-for-c2-comms/" target="_blank" class="share-icon" title="X / Twitter">
+                <a href="https://twitter.com/intent/tweet?text=Cyber Security Alert: New Linux botnet SSHStalker uses old-school IRC for C2 comms&url=https://www.bleepingcomputer.com/news/security/new-linux-botnet-sshstalker-uses-old-school-irc-for-c2-comms/" target="_blank" class="share-icon" title="Share on X">
                     <i class="fa-brands fa-x-twitter"></i>
                 </a>
-                <a href="mailto:?subject=Siber İstihbarat Raporu&body=Bu haberi görmelisin: New Linux botnet SSHStalker uses old-school IRC for C2 comms - https://www.bleepingcomputer.com/news/security/new-linux-botnet-sshstalker-uses-old-school-irc-for-c2-comms/" class="share-icon" title="Email">
+                <a href="mailto:?subject=Cyber Intelligence Report&body=I thought this might interest you: New Linux botnet SSHStalker uses old-school IRC for C2 comms - https://www.bleepingcomputer.com/news/security/new-linux-botnet-sshstalker-uses-old-school-irc-for-c2-comms/" class="share-icon" title="Send via Email">
                     <i class="fas fa-envelope"></i>
                 </a>
             </div>
         </article>
         
-        <article class="card" data-source="BleepingComputer">
+        <article class="card" data-source="BleepingComputer" data-zeroday="false">
             
             
             <div class="meta">
                 <span class="source-badge">BleepingComputer</span>
-                <span>22:17</span>
+                <span>2026-02-10 22:17</span>
             </div>
             
             <h2><a href="https://www.bleepingcomputer.com/news/security/north-korean-hackers-use-new-macos-malware-in-crypto-theft-attacks/" target="_blank">North Korean hackers use new macOS malware in crypto-theft attacks</a></h2>
@@ -502,59 +515,27 @@ Of the 59 flaws, five are rated Critical, 52 are rated Important, and two are ra
             </div>
 
             <div class="card-footer">
-                <a href="https://wa.me/?text=İncele: https://www.bleepingcomputer.com/news/security/north-korean-hackers-use-new-macos-malware-in-crypto-theft-attacks/" target="_blank" class="share-icon" title="WhatsApp">
+                <a href="https://wa.me/?text=Check this out: https://www.bleepingcomputer.com/news/security/north-korean-hackers-use-new-macos-malware-in-crypto-theft-attacks/" target="_blank" class="share-icon" title="Share on WhatsApp">
                     <i class="fab fa-whatsapp"></i>
                 </a>
-                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.bleepingcomputer.com/news/security/north-korean-hackers-use-new-macos-malware-in-crypto-theft-attacks/" target="_blank" class="share-icon" title="LinkedIn">
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.bleepingcomputer.com/news/security/north-korean-hackers-use-new-macos-malware-in-crypto-theft-attacks/" target="_blank" class="share-icon" title="Share on LinkedIn">
                     <i class="fab fa-linkedin"></i>
                 </a>
-                <a href="https://twitter.com/intent/tweet?text=North Korean hackers use new macOS malware in crypto-theft attacks&url=https://www.bleepingcomputer.com/news/security/north-korean-hackers-use-new-macos-malware-in-crypto-theft-attacks/" target="_blank" class="share-icon" title="X / Twitter">
+                <a href="https://twitter.com/intent/tweet?text=Cyber Security Alert: North Korean hackers use new macOS malware in crypto-theft attacks&url=https://www.bleepingcomputer.com/news/security/north-korean-hackers-use-new-macos-malware-in-crypto-theft-attacks/" target="_blank" class="share-icon" title="Share on X">
                     <i class="fa-brands fa-x-twitter"></i>
                 </a>
-                <a href="mailto:?subject=Siber İstihbarat Raporu&body=Bu haberi görmelisin: North Korean hackers use new macOS malware in crypto-theft attacks - https://www.bleepingcomputer.com/news/security/north-korean-hackers-use-new-macos-malware-in-crypto-theft-attacks/" class="share-icon" title="Email">
+                <a href="mailto:?subject=Cyber Intelligence Report&body=I thought this might interest you: North Korean hackers use new macOS malware in crypto-theft attacks - https://www.bleepingcomputer.com/news/security/north-korean-hackers-use-new-macos-malware-in-crypto-theft-attacks/" class="share-icon" title="Send via Email">
                     <i class="fas fa-envelope"></i>
                 </a>
             </div>
         </article>
         
-        <article class="card" data-source="Krebs on Security">
-            
-            <div class="zeroday-banner">⚠️ ZERO-DAY DETECTED</div>
-            
-            
-            <div class="meta">
-                <span class="source-badge">Krebs on Security</span>
-                <span>21:49</span>
-            </div>
-            
-            <h2><a href="https://krebsonsecurity.com/2026/02/patch-tuesday-february-2026-edition/" target="_blank">Patch Tuesday, February 2026 Edition</a></h2>
-            
-            <div class="summary">
-                Microsoft today released updates to fix more than 50 security holes in its Windows operating systems and other software, including patches for a whopping six "zero-day" vulnerabilities that attackers are already exploiting in the wild.
-            </div>
-
-            <div class="card-footer">
-                <a href="https://wa.me/?text=İncele: https://krebsonsecurity.com/2026/02/patch-tuesday-february-2026-edition/" target="_blank" class="share-icon" title="WhatsApp">
-                    <i class="fab fa-whatsapp"></i>
-                </a>
-                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://krebsonsecurity.com/2026/02/patch-tuesday-february-2026-edition/" target="_blank" class="share-icon" title="LinkedIn">
-                    <i class="fab fa-linkedin"></i>
-                </a>
-                <a href="https://twitter.com/intent/tweet?text=Patch Tuesday, February 2026 Edition&url=https://krebsonsecurity.com/2026/02/patch-tuesday-february-2026-edition/" target="_blank" class="share-icon" title="X / Twitter">
-                    <i class="fa-brands fa-x-twitter"></i>
-                </a>
-                <a href="mailto:?subject=Siber İstihbarat Raporu&body=Bu haberi görmelisin: Patch Tuesday, February 2026 Edition - https://krebsonsecurity.com/2026/02/patch-tuesday-february-2026-edition/" class="share-icon" title="Email">
-                    <i class="fas fa-envelope"></i>
-                </a>
-            </div>
-        </article>
-        
-        <article class="card" data-source="BleepingComputer">
+        <article class="card" data-source="BleepingComputer" data-zeroday="false">
             
             
             <div class="meta">
                 <span class="source-badge">BleepingComputer</span>
-                <span>19:12</span>
+                <span>2026-02-10 19:12</span>
             </div>
             
             <h2><a href="https://www.bleepingcomputer.com/news/security/malicious-7-zip-site-distributes-installer-laced-with-proxy-tool/" target="_blank">Malicious 7-Zip site distributes installer laced with proxy tool</a></h2>
@@ -564,29 +545,29 @@ Of the 59 flaws, five are rated Critical, 52 are rated Important, and two are ra
             </div>
 
             <div class="card-footer">
-                <a href="https://wa.me/?text=İncele: https://www.bleepingcomputer.com/news/security/malicious-7-zip-site-distributes-installer-laced-with-proxy-tool/" target="_blank" class="share-icon" title="WhatsApp">
+                <a href="https://wa.me/?text=Check this out: https://www.bleepingcomputer.com/news/security/malicious-7-zip-site-distributes-installer-laced-with-proxy-tool/" target="_blank" class="share-icon" title="Share on WhatsApp">
                     <i class="fab fa-whatsapp"></i>
                 </a>
-                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.bleepingcomputer.com/news/security/malicious-7-zip-site-distributes-installer-laced-with-proxy-tool/" target="_blank" class="share-icon" title="LinkedIn">
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.bleepingcomputer.com/news/security/malicious-7-zip-site-distributes-installer-laced-with-proxy-tool/" target="_blank" class="share-icon" title="Share on LinkedIn">
                     <i class="fab fa-linkedin"></i>
                 </a>
-                <a href="https://twitter.com/intent/tweet?text=Malicious 7-Zip site distributes installer laced with proxy tool&url=https://www.bleepingcomputer.com/news/security/malicious-7-zip-site-distributes-installer-laced-with-proxy-tool/" target="_blank" class="share-icon" title="X / Twitter">
+                <a href="https://twitter.com/intent/tweet?text=Cyber Security Alert: Malicious 7-Zip site distributes installer laced with proxy tool&url=https://www.bleepingcomputer.com/news/security/malicious-7-zip-site-distributes-installer-laced-with-proxy-tool/" target="_blank" class="share-icon" title="Share on X">
                     <i class="fa-brands fa-x-twitter"></i>
                 </a>
-                <a href="mailto:?subject=Siber İstihbarat Raporu&body=Bu haberi görmelisin: Malicious 7-Zip site distributes installer laced with proxy tool - https://www.bleepingcomputer.com/news/security/malicious-7-zip-site-distributes-installer-laced-with-proxy-tool/" class="share-icon" title="Email">
+                <a href="mailto:?subject=Cyber Intelligence Report&body=I thought this might interest you: Malicious 7-Zip site distributes installer laced with proxy tool - https://www.bleepingcomputer.com/news/security/malicious-7-zip-site-distributes-installer-laced-with-proxy-tool/" class="share-icon" title="Send via Email">
                     <i class="fas fa-envelope"></i>
                 </a>
             </div>
         </article>
         
-        <article class="card" data-source="BleepingComputer">
+        <article class="card" data-source="BleepingComputer" data-zeroday="true">
             
             <div class="zeroday-banner">⚠️ ZERO-DAY DETECTED</div>
             
             
             <div class="meta">
                 <span class="source-badge">BleepingComputer</span>
-                <span>19:06</span>
+                <span>2026-02-10 19:06</span>
             </div>
             
             <h2><a href="https://www.bleepingcomputer.com/news/microsoft/microsoft-releases-windows-10-kb5075912-extended-security-update/" target="_blank">Microsoft releases Windows 10 KB5075912 extended security update</a></h2>
@@ -596,29 +577,29 @@ Of the 59 flaws, five are rated Critical, 52 are rated Important, and two are ra
             </div>
 
             <div class="card-footer">
-                <a href="https://wa.me/?text=İncele: https://www.bleepingcomputer.com/news/microsoft/microsoft-releases-windows-10-kb5075912-extended-security-update/" target="_blank" class="share-icon" title="WhatsApp">
+                <a href="https://wa.me/?text=Check this out: https://www.bleepingcomputer.com/news/microsoft/microsoft-releases-windows-10-kb5075912-extended-security-update/" target="_blank" class="share-icon" title="Share on WhatsApp">
                     <i class="fab fa-whatsapp"></i>
                 </a>
-                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.bleepingcomputer.com/news/microsoft/microsoft-releases-windows-10-kb5075912-extended-security-update/" target="_blank" class="share-icon" title="LinkedIn">
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.bleepingcomputer.com/news/microsoft/microsoft-releases-windows-10-kb5075912-extended-security-update/" target="_blank" class="share-icon" title="Share on LinkedIn">
                     <i class="fab fa-linkedin"></i>
                 </a>
-                <a href="https://twitter.com/intent/tweet?text=Microsoft releases Windows 10 KB5075912 extended security update&url=https://www.bleepingcomputer.com/news/microsoft/microsoft-releases-windows-10-kb5075912-extended-security-update/" target="_blank" class="share-icon" title="X / Twitter">
+                <a href="https://twitter.com/intent/tweet?text=Cyber Security Alert: Microsoft releases Windows 10 KB5075912 extended security update&url=https://www.bleepingcomputer.com/news/microsoft/microsoft-releases-windows-10-kb5075912-extended-security-update/" target="_blank" class="share-icon" title="Share on X">
                     <i class="fa-brands fa-x-twitter"></i>
                 </a>
-                <a href="mailto:?subject=Siber İstihbarat Raporu&body=Bu haberi görmelisin: Microsoft releases Windows 10 KB5075912 extended security update - https://www.bleepingcomputer.com/news/microsoft/microsoft-releases-windows-10-kb5075912-extended-security-update/" class="share-icon" title="Email">
+                <a href="mailto:?subject=Cyber Intelligence Report&body=I thought this might interest you: Microsoft releases Windows 10 KB5075912 extended security update - https://www.bleepingcomputer.com/news/microsoft/microsoft-releases-windows-10-kb5075912-extended-security-update/" class="share-icon" title="Send via Email">
                     <i class="fas fa-envelope"></i>
                 </a>
             </div>
         </article>
         
-        <article class="card" data-source="BleepingComputer">
+        <article class="card" data-source="BleepingComputer" data-zeroday="true">
             
             <div class="zeroday-banner">⚠️ ZERO-DAY DETECTED</div>
             
             
             <div class="meta">
                 <span class="source-badge">BleepingComputer</span>
-                <span>18:51</span>
+                <span>2026-02-10 18:51</span>
             </div>
             
             <h2><a href="https://www.bleepingcomputer.com/news/microsoft/microsoft-february-2026-patch-tuesday-fixes-6-zero-days-58-flaws/" target="_blank">Microsoft February 2026 Patch Tuesday fixes 6 zero-days, 58 flaws</a></h2>
@@ -628,27 +609,27 @@ Of the 59 flaws, five are rated Critical, 52 are rated Important, and two are ra
             </div>
 
             <div class="card-footer">
-                <a href="https://wa.me/?text=İncele: https://www.bleepingcomputer.com/news/microsoft/microsoft-february-2026-patch-tuesday-fixes-6-zero-days-58-flaws/" target="_blank" class="share-icon" title="WhatsApp">
+                <a href="https://wa.me/?text=Check this out: https://www.bleepingcomputer.com/news/microsoft/microsoft-february-2026-patch-tuesday-fixes-6-zero-days-58-flaws/" target="_blank" class="share-icon" title="Share on WhatsApp">
                     <i class="fab fa-whatsapp"></i>
                 </a>
-                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.bleepingcomputer.com/news/microsoft/microsoft-february-2026-patch-tuesday-fixes-6-zero-days-58-flaws/" target="_blank" class="share-icon" title="LinkedIn">
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.bleepingcomputer.com/news/microsoft/microsoft-february-2026-patch-tuesday-fixes-6-zero-days-58-flaws/" target="_blank" class="share-icon" title="Share on LinkedIn">
                     <i class="fab fa-linkedin"></i>
                 </a>
-                <a href="https://twitter.com/intent/tweet?text=Microsoft February 2026 Patch Tuesday fixes 6 zero-days, 58 flaws&url=https://www.bleepingcomputer.com/news/microsoft/microsoft-february-2026-patch-tuesday-fixes-6-zero-days-58-flaws/" target="_blank" class="share-icon" title="X / Twitter">
+                <a href="https://twitter.com/intent/tweet?text=Cyber Security Alert: Microsoft February 2026 Patch Tuesday fixes 6 zero-days, 58 flaws&url=https://www.bleepingcomputer.com/news/microsoft/microsoft-february-2026-patch-tuesday-fixes-6-zero-days-58-flaws/" target="_blank" class="share-icon" title="Share on X">
                     <i class="fa-brands fa-x-twitter"></i>
                 </a>
-                <a href="mailto:?subject=Siber İstihbarat Raporu&body=Bu haberi görmelisin: Microsoft February 2026 Patch Tuesday fixes 6 zero-days, 58 flaws - https://www.bleepingcomputer.com/news/microsoft/microsoft-february-2026-patch-tuesday-fixes-6-zero-days-58-flaws/" class="share-icon" title="Email">
+                <a href="mailto:?subject=Cyber Intelligence Report&body=I thought this might interest you: Microsoft February 2026 Patch Tuesday fixes 6 zero-days, 58 flaws - https://www.bleepingcomputer.com/news/microsoft/microsoft-february-2026-patch-tuesday-fixes-6-zero-days-58-flaws/" class="share-icon" title="Send via Email">
                     <i class="fas fa-envelope"></i>
                 </a>
             </div>
         </article>
         
-        <article class="card" data-source="BleepingComputer">
+        <article class="card" data-source="BleepingComputer" data-zeroday="false">
             
             
             <div class="meta">
                 <span class="source-badge">BleepingComputer</span>
-                <span>18:43</span>
+                <span>2026-02-10 18:43</span>
             </div>
             
             <h2><a href="https://www.bleepingcomputer.com/news/microsoft/windows-11-kb5077181-and-kb5075941-cumulative-updates-released/" target="_blank">Windows 11 KB5077181 & KB5075941 cumulative updates released</a></h2>
@@ -658,27 +639,27 @@ Of the 59 flaws, five are rated Critical, 52 are rated Important, and two are ra
             </div>
 
             <div class="card-footer">
-                <a href="https://wa.me/?text=İncele: https://www.bleepingcomputer.com/news/microsoft/windows-11-kb5077181-and-kb5075941-cumulative-updates-released/" target="_blank" class="share-icon" title="WhatsApp">
+                <a href="https://wa.me/?text=Check this out: https://www.bleepingcomputer.com/news/microsoft/windows-11-kb5077181-and-kb5075941-cumulative-updates-released/" target="_blank" class="share-icon" title="Share on WhatsApp">
                     <i class="fab fa-whatsapp"></i>
                 </a>
-                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.bleepingcomputer.com/news/microsoft/windows-11-kb5077181-and-kb5075941-cumulative-updates-released/" target="_blank" class="share-icon" title="LinkedIn">
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.bleepingcomputer.com/news/microsoft/windows-11-kb5077181-and-kb5075941-cumulative-updates-released/" target="_blank" class="share-icon" title="Share on LinkedIn">
                     <i class="fab fa-linkedin"></i>
                 </a>
-                <a href="https://twitter.com/intent/tweet?text=Windows 11 KB5077181 & KB5075941 cumulative updates released&url=https://www.bleepingcomputer.com/news/microsoft/windows-11-kb5077181-and-kb5075941-cumulative-updates-released/" target="_blank" class="share-icon" title="X / Twitter">
+                <a href="https://twitter.com/intent/tweet?text=Cyber Security Alert: Windows 11 KB5077181 & KB5075941 cumulative updates released&url=https://www.bleepingcomputer.com/news/microsoft/windows-11-kb5077181-and-kb5075941-cumulative-updates-released/" target="_blank" class="share-icon" title="Share on X">
                     <i class="fa-brands fa-x-twitter"></i>
                 </a>
-                <a href="mailto:?subject=Siber İstihbarat Raporu&body=Bu haberi görmelisin: Windows 11 KB5077181 & KB5075941 cumulative updates released - https://www.bleepingcomputer.com/news/microsoft/windows-11-kb5077181-and-kb5075941-cumulative-updates-released/" class="share-icon" title="Email">
+                <a href="mailto:?subject=Cyber Intelligence Report&body=I thought this might interest you: Windows 11 KB5077181 & KB5075941 cumulative updates released - https://www.bleepingcomputer.com/news/microsoft/windows-11-kb5077181-and-kb5075941-cumulative-updates-released/" class="share-icon" title="Send via Email">
                     <i class="fas fa-envelope"></i>
                 </a>
             </div>
         </article>
         
-        <article class="card" data-source="The Hacker News">
+        <article class="card" data-source="The Hacker News" data-zeroday="false">
             
             
             <div class="meta">
                 <span class="source-badge">The Hacker News</span>
-                <span>17:44</span>
+                <span>2026-02-10 17:44</span>
             </div>
             
             <h2><a href="https://thehackernews.com/2026/02/dprk-operatives-impersonate.html" target="_blank">DPRK Operatives Impersonate Professionals on LinkedIn to Infiltrate Companies</a></h2>
@@ -689,27 +670,27 @@ Of the 59 flaws, five are rated Critical, 52 are rated Important, and two are ra
             </div>
 
             <div class="card-footer">
-                <a href="https://wa.me/?text=İncele: https://thehackernews.com/2026/02/dprk-operatives-impersonate.html" target="_blank" class="share-icon" title="WhatsApp">
+                <a href="https://wa.me/?text=Check this out: https://thehackernews.com/2026/02/dprk-operatives-impersonate.html" target="_blank" class="share-icon" title="Share on WhatsApp">
                     <i class="fab fa-whatsapp"></i>
                 </a>
-                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://thehackernews.com/2026/02/dprk-operatives-impersonate.html" target="_blank" class="share-icon" title="LinkedIn">
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://thehackernews.com/2026/02/dprk-operatives-impersonate.html" target="_blank" class="share-icon" title="Share on LinkedIn">
                     <i class="fab fa-linkedin"></i>
                 </a>
-                <a href="https://twitter.com/intent/tweet?text=DPRK Operatives Impersonate Professionals on LinkedIn to Infiltrate Companies&url=https://thehackernews.com/2026/02/dprk-operatives-impersonate.html" target="_blank" class="share-icon" title="X / Twitter">
+                <a href="https://twitter.com/intent/tweet?text=Cyber Security Alert: DPRK Operatives Impersonate Professionals on LinkedIn to Infiltrate Companies&url=https://thehackernews.com/2026/02/dprk-operatives-impersonate.html" target="_blank" class="share-icon" title="Share on X">
                     <i class="fa-brands fa-x-twitter"></i>
                 </a>
-                <a href="mailto:?subject=Siber İstihbarat Raporu&body=Bu haberi görmelisin: DPRK Operatives Impersonate Professionals on LinkedIn to Infiltrate Companies - https://thehackernews.com/2026/02/dprk-operatives-impersonate.html" class="share-icon" title="Email">
+                <a href="mailto:?subject=Cyber Intelligence Report&body=I thought this might interest you: DPRK Operatives Impersonate Professionals on LinkedIn to Infiltrate Companies - https://thehackernews.com/2026/02/dprk-operatives-impersonate.html" class="share-icon" title="Send via Email">
                     <i class="fas fa-envelope"></i>
                 </a>
             </div>
         </article>
         
-        <article class="card" data-source="BleepingComputer">
+        <article class="card" data-source="BleepingComputer" data-zeroday="false">
             
             
             <div class="meta">
                 <span class="source-badge">BleepingComputer</span>
-                <span>17:04</span>
+                <span>2026-02-10 17:04</span>
             </div>
             
             <h2><a href="https://www.bleepingcomputer.com/news/security/volvo-group-north-america-customer-data-exposed-in-conduent-hack/" target="_blank">Volvo Group North America customer data exposed in Conduent hack</a></h2>
@@ -719,27 +700,27 @@ Of the 59 flaws, five are rated Critical, 52 are rated Important, and two are ra
             </div>
 
             <div class="card-footer">
-                <a href="https://wa.me/?text=İncele: https://www.bleepingcomputer.com/news/security/volvo-group-north-america-customer-data-exposed-in-conduent-hack/" target="_blank" class="share-icon" title="WhatsApp">
+                <a href="https://wa.me/?text=Check this out: https://www.bleepingcomputer.com/news/security/volvo-group-north-america-customer-data-exposed-in-conduent-hack/" target="_blank" class="share-icon" title="Share on WhatsApp">
                     <i class="fab fa-whatsapp"></i>
                 </a>
-                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.bleepingcomputer.com/news/security/volvo-group-north-america-customer-data-exposed-in-conduent-hack/" target="_blank" class="share-icon" title="LinkedIn">
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.bleepingcomputer.com/news/security/volvo-group-north-america-customer-data-exposed-in-conduent-hack/" target="_blank" class="share-icon" title="Share on LinkedIn">
                     <i class="fab fa-linkedin"></i>
                 </a>
-                <a href="https://twitter.com/intent/tweet?text=Volvo Group North America customer data exposed in Conduent hack&url=https://www.bleepingcomputer.com/news/security/volvo-group-north-america-customer-data-exposed-in-conduent-hack/" target="_blank" class="share-icon" title="X / Twitter">
+                <a href="https://twitter.com/intent/tweet?text=Cyber Security Alert: Volvo Group North America customer data exposed in Conduent hack&url=https://www.bleepingcomputer.com/news/security/volvo-group-north-america-customer-data-exposed-in-conduent-hack/" target="_blank" class="share-icon" title="Share on X">
                     <i class="fa-brands fa-x-twitter"></i>
                 </a>
-                <a href="mailto:?subject=Siber İstihbarat Raporu&body=Bu haberi görmelisin: Volvo Group North America customer data exposed in Conduent hack - https://www.bleepingcomputer.com/news/security/volvo-group-north-america-customer-data-exposed-in-conduent-hack/" class="share-icon" title="Email">
+                <a href="mailto:?subject=Cyber Intelligence Report&body=I thought this might interest you: Volvo Group North America customer data exposed in Conduent hack - https://www.bleepingcomputer.com/news/security/volvo-group-north-america-customer-data-exposed-in-conduent-hack/" class="share-icon" title="Send via Email">
                     <i class="fas fa-envelope"></i>
                 </a>
             </div>
         </article>
         
-        <article class="card" data-source="BleepingComputer">
+        <article class="card" data-source="BleepingComputer" data-zeroday="false">
             
             
             <div class="meta">
                 <span class="source-badge">BleepingComputer</span>
-                <span>17:00</span>
+                <span>2026-02-10 17:00</span>
             </div>
             
             <h2><a href="https://www.bleepingcomputer.com/news/microsoft/microsoft-rolls-out-new-secure-boot-certificates-before-june-expiration/" target="_blank">Microsoft rolls out new Secure Boot certificates before June expiration</a></h2>
@@ -749,27 +730,27 @@ Of the 59 flaws, five are rated Critical, 52 are rated Important, and two are ra
             </div>
 
             <div class="card-footer">
-                <a href="https://wa.me/?text=İncele: https://www.bleepingcomputer.com/news/microsoft/microsoft-rolls-out-new-secure-boot-certificates-before-june-expiration/" target="_blank" class="share-icon" title="WhatsApp">
+                <a href="https://wa.me/?text=Check this out: https://www.bleepingcomputer.com/news/microsoft/microsoft-rolls-out-new-secure-boot-certificates-before-june-expiration/" target="_blank" class="share-icon" title="Share on WhatsApp">
                     <i class="fab fa-whatsapp"></i>
                 </a>
-                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.bleepingcomputer.com/news/microsoft/microsoft-rolls-out-new-secure-boot-certificates-before-june-expiration/" target="_blank" class="share-icon" title="LinkedIn">
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.bleepingcomputer.com/news/microsoft/microsoft-rolls-out-new-secure-boot-certificates-before-june-expiration/" target="_blank" class="share-icon" title="Share on LinkedIn">
                     <i class="fab fa-linkedin"></i>
                 </a>
-                <a href="https://twitter.com/intent/tweet?text=Microsoft rolls out new Secure Boot certificates before June expiration&url=https://www.bleepingcomputer.com/news/microsoft/microsoft-rolls-out-new-secure-boot-certificates-before-june-expiration/" target="_blank" class="share-icon" title="X / Twitter">
+                <a href="https://twitter.com/intent/tweet?text=Cyber Security Alert: Microsoft rolls out new Secure Boot certificates before June expiration&url=https://www.bleepingcomputer.com/news/microsoft/microsoft-rolls-out-new-secure-boot-certificates-before-june-expiration/" target="_blank" class="share-icon" title="Share on X">
                     <i class="fa-brands fa-x-twitter"></i>
                 </a>
-                <a href="mailto:?subject=Siber İstihbarat Raporu&body=Bu haberi görmelisin: Microsoft rolls out new Secure Boot certificates before June expiration - https://www.bleepingcomputer.com/news/microsoft/microsoft-rolls-out-new-secure-boot-certificates-before-june-expiration/" class="share-icon" title="Email">
+                <a href="mailto:?subject=Cyber Intelligence Report&body=I thought this might interest you: Microsoft rolls out new Secure Boot certificates before June expiration - https://www.bleepingcomputer.com/news/microsoft/microsoft-rolls-out-new-secure-boot-certificates-before-june-expiration/" class="share-icon" title="Send via Email">
                     <i class="fas fa-envelope"></i>
                 </a>
             </div>
         </article>
         
-        <article class="card" data-source="BleepingComputer">
+        <article class="card" data-source="BleepingComputer" data-zeroday="false">
             
             
             <div class="meta">
                 <span class="source-badge">BleepingComputer</span>
-                <span>15:45</span>
+                <span>2026-02-10 15:45</span>
             </div>
             
             <h2><a href="https://www.bleepingcomputer.com/news/microsoft/microsoft-365-outage-takes-down-admin-center-in-north-america/" target="_blank">Microsoft 365 outage takes down admin center in North America</a></h2>
@@ -779,27 +760,27 @@ Of the 59 flaws, five are rated Critical, 52 are rated Important, and two are ra
             </div>
 
             <div class="card-footer">
-                <a href="https://wa.me/?text=İncele: https://www.bleepingcomputer.com/news/microsoft/microsoft-365-outage-takes-down-admin-center-in-north-america/" target="_blank" class="share-icon" title="WhatsApp">
+                <a href="https://wa.me/?text=Check this out: https://www.bleepingcomputer.com/news/microsoft/microsoft-365-outage-takes-down-admin-center-in-north-america/" target="_blank" class="share-icon" title="Share on WhatsApp">
                     <i class="fab fa-whatsapp"></i>
                 </a>
-                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.bleepingcomputer.com/news/microsoft/microsoft-365-outage-takes-down-admin-center-in-north-america/" target="_blank" class="share-icon" title="LinkedIn">
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.bleepingcomputer.com/news/microsoft/microsoft-365-outage-takes-down-admin-center-in-north-america/" target="_blank" class="share-icon" title="Share on LinkedIn">
                     <i class="fab fa-linkedin"></i>
                 </a>
-                <a href="https://twitter.com/intent/tweet?text=Microsoft 365 outage takes down admin center in North America&url=https://www.bleepingcomputer.com/news/microsoft/microsoft-365-outage-takes-down-admin-center-in-north-america/" target="_blank" class="share-icon" title="X / Twitter">
+                <a href="https://twitter.com/intent/tweet?text=Cyber Security Alert: Microsoft 365 outage takes down admin center in North America&url=https://www.bleepingcomputer.com/news/microsoft/microsoft-365-outage-takes-down-admin-center-in-north-america/" target="_blank" class="share-icon" title="Share on X">
                     <i class="fa-brands fa-x-twitter"></i>
                 </a>
-                <a href="mailto:?subject=Siber İstihbarat Raporu&body=Bu haberi görmelisin: Microsoft 365 outage takes down admin center in North America - https://www.bleepingcomputer.com/news/microsoft/microsoft-365-outage-takes-down-admin-center-in-north-america/" class="share-icon" title="Email">
+                <a href="mailto:?subject=Cyber Intelligence Report&body=I thought this might interest you: Microsoft 365 outage takes down admin center in North America - https://www.bleepingcomputer.com/news/microsoft/microsoft-365-outage-takes-down-admin-center-in-north-america/" class="share-icon" title="Send via Email">
                     <i class="fas fa-envelope"></i>
                 </a>
             </div>
         </article>
         
-        <article class="card" data-source="BleepingComputer">
+        <article class="card" data-source="BleepingComputer" data-zeroday="false">
             
             
             <div class="meta">
                 <span class="source-badge">BleepingComputer</span>
-                <span>15:01</span>
+                <span>2026-02-10 15:01</span>
             </div>
             
             <h2><a href="https://www.bleepingcomputer.com/news/security/how-to-automate-aws-incident-investigation-with-tines-and-ai/" target="_blank">How to Automate AWS Incident Investigation with Tines and AI</a></h2>
@@ -809,27 +790,27 @@ Of the 59 flaws, five are rated Critical, 52 are rated Important, and two are ra
             </div>
 
             <div class="card-footer">
-                <a href="https://wa.me/?text=İncele: https://www.bleepingcomputer.com/news/security/how-to-automate-aws-incident-investigation-with-tines-and-ai/" target="_blank" class="share-icon" title="WhatsApp">
+                <a href="https://wa.me/?text=Check this out: https://www.bleepingcomputer.com/news/security/how-to-automate-aws-incident-investigation-with-tines-and-ai/" target="_blank" class="share-icon" title="Share on WhatsApp">
                     <i class="fab fa-whatsapp"></i>
                 </a>
-                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.bleepingcomputer.com/news/security/how-to-automate-aws-incident-investigation-with-tines-and-ai/" target="_blank" class="share-icon" title="LinkedIn">
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.bleepingcomputer.com/news/security/how-to-automate-aws-incident-investigation-with-tines-and-ai/" target="_blank" class="share-icon" title="Share on LinkedIn">
                     <i class="fab fa-linkedin"></i>
                 </a>
-                <a href="https://twitter.com/intent/tweet?text=How to Automate AWS Incident Investigation with Tines and AI&url=https://www.bleepingcomputer.com/news/security/how-to-automate-aws-incident-investigation-with-tines-and-ai/" target="_blank" class="share-icon" title="X / Twitter">
+                <a href="https://twitter.com/intent/tweet?text=Cyber Security Alert: How to Automate AWS Incident Investigation with Tines and AI&url=https://www.bleepingcomputer.com/news/security/how-to-automate-aws-incident-investigation-with-tines-and-ai/" target="_blank" class="share-icon" title="Share on X">
                     <i class="fa-brands fa-x-twitter"></i>
                 </a>
-                <a href="mailto:?subject=Siber İstihbarat Raporu&body=Bu haberi görmelisin: How to Automate AWS Incident Investigation with Tines and AI - https://www.bleepingcomputer.com/news/security/how-to-automate-aws-incident-investigation-with-tines-and-ai/" class="share-icon" title="Email">
+                <a href="mailto:?subject=Cyber Intelligence Report&body=I thought this might interest you: How to Automate AWS Incident Investigation with Tines and AI - https://www.bleepingcomputer.com/news/security/how-to-automate-aws-incident-investigation-with-tines-and-ai/" class="share-icon" title="Send via Email">
                     <i class="fas fa-envelope"></i>
                 </a>
             </div>
         </article>
         
-        <article class="card" data-source="The Hacker News">
+        <article class="card" data-source="The Hacker News" data-zeroday="false">
             
             
             <div class="meta">
                 <span class="source-badge">The Hacker News</span>
-                <span>14:36</span>
+                <span>2026-02-10 14:36</span>
             </div>
             
             <h2><a href="https://thehackernews.com/2026/02/reynolds-ransomware-embeds-byovd-driver.html" target="_blank">Reynolds Ransomware Embeds BYOVD Driver to Disable EDR Security Tools</a></h2>
@@ -840,27 +821,27 @@ BYOVD refers to an adversarial technique that abuses legitimate but flawed drive
             </div>
 
             <div class="card-footer">
-                <a href="https://wa.me/?text=İncele: https://thehackernews.com/2026/02/reynolds-ransomware-embeds-byovd-driver.html" target="_blank" class="share-icon" title="WhatsApp">
+                <a href="https://wa.me/?text=Check this out: https://thehackernews.com/2026/02/reynolds-ransomware-embeds-byovd-driver.html" target="_blank" class="share-icon" title="Share on WhatsApp">
                     <i class="fab fa-whatsapp"></i>
                 </a>
-                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://thehackernews.com/2026/02/reynolds-ransomware-embeds-byovd-driver.html" target="_blank" class="share-icon" title="LinkedIn">
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://thehackernews.com/2026/02/reynolds-ransomware-embeds-byovd-driver.html" target="_blank" class="share-icon" title="Share on LinkedIn">
                     <i class="fab fa-linkedin"></i>
                 </a>
-                <a href="https://twitter.com/intent/tweet?text=Reynolds Ransomware Embeds BYOVD Driver to Disable EDR Security Tools&url=https://thehackernews.com/2026/02/reynolds-ransomware-embeds-byovd-driver.html" target="_blank" class="share-icon" title="X / Twitter">
+                <a href="https://twitter.com/intent/tweet?text=Cyber Security Alert: Reynolds Ransomware Embeds BYOVD Driver to Disable EDR Security Tools&url=https://thehackernews.com/2026/02/reynolds-ransomware-embeds-byovd-driver.html" target="_blank" class="share-icon" title="Share on X">
                     <i class="fa-brands fa-x-twitter"></i>
                 </a>
-                <a href="mailto:?subject=Siber İstihbarat Raporu&body=Bu haberi görmelisin: Reynolds Ransomware Embeds BYOVD Driver to Disable EDR Security Tools - https://thehackernews.com/2026/02/reynolds-ransomware-embeds-byovd-driver.html" class="share-icon" title="Email">
+                <a href="mailto:?subject=Cyber Intelligence Report&body=I thought this might interest you: Reynolds Ransomware Embeds BYOVD Driver to Disable EDR Security Tools - https://thehackernews.com/2026/02/reynolds-ransomware-embeds-byovd-driver.html" class="share-icon" title="Send via Email">
                     <i class="fas fa-envelope"></i>
                 </a>
             </div>
         </article>
         
-        <article class="card" data-source="The Hacker News">
+        <article class="card" data-source="The Hacker News" data-zeroday="false">
             
             
             <div class="meta">
                 <span class="source-badge">The Hacker News</span>
-                <span>13:59</span>
+                <span>2026-02-10 13:59</span>
             </div>
             
             <h2><a href="https://thehackernews.com/2026/02/from-ransomware-to-residency-inside.html" target="_blank">From Ransomware to Residency: Inside the Rise of the Digital Parasite</a></h2>
@@ -871,81 +852,16 @@ According to Picus Labs’ new Red Report 2026, which analyzed over 1.1 million 
             </div>
 
             <div class="card-footer">
-                <a href="https://wa.me/?text=İncele: https://thehackernews.com/2026/02/from-ransomware-to-residency-inside.html" target="_blank" class="share-icon" title="WhatsApp">
+                <a href="https://wa.me/?text=Check this out: https://thehackernews.com/2026/02/from-ransomware-to-residency-inside.html" target="_blank" class="share-icon" title="Share on WhatsApp">
                     <i class="fab fa-whatsapp"></i>
                 </a>
-                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://thehackernews.com/2026/02/from-ransomware-to-residency-inside.html" target="_blank" class="share-icon" title="LinkedIn">
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://thehackernews.com/2026/02/from-ransomware-to-residency-inside.html" target="_blank" class="share-icon" title="Share on LinkedIn">
                     <i class="fab fa-linkedin"></i>
                 </a>
-                <a href="https://twitter.com/intent/tweet?text=From Ransomware to Residency: Inside the Rise of the Digital Parasite&url=https://thehackernews.com/2026/02/from-ransomware-to-residency-inside.html" target="_blank" class="share-icon" title="X / Twitter">
+                <a href="https://twitter.com/intent/tweet?text=Cyber Security Alert: From Ransomware to Residency: Inside the Rise of the Digital Parasite&url=https://thehackernews.com/2026/02/from-ransomware-to-residency-inside.html" target="_blank" class="share-icon" title="Share on X">
                     <i class="fa-brands fa-x-twitter"></i>
                 </a>
-                <a href="mailto:?subject=Siber İstihbarat Raporu&body=Bu haberi görmelisin: From Ransomware to Residency: Inside the Rise of the Digital Parasite - https://thehackernews.com/2026/02/from-ransomware-to-residency-inside.html" class="share-icon" title="Email">
-                    <i class="fas fa-envelope"></i>
-                </a>
-            </div>
-        </article>
-        
-        <article class="card" data-source="The Hacker News">
-            
-            <div class="zeroday-banner">⚠️ ZERO-DAY DETECTED</div>
-            
-            
-            <div class="meta">
-                <span class="source-badge">The Hacker News</span>
-                <span>13:30</span>
-            </div>
-            
-            <h2><a href="https://thehackernews.com/2026/02/fortinet-patches-critical-sqli-flaw.html" target="_blank">Fortinet Patches Critical SQLi Flaw Enabling Unauthenticated Code Execution</a></h2>
-            
-            <div class="summary">
-                Fortinet has released security updates to address a critical flaw impacting FortiClientEMS that could lead to the execution of arbitrary code on susceptible systems.
-The vulnerability, tracked as CVE-2026-21643, has a CVSS rating of 9.1 out of a maximum of 10.0.
-
-"An improper neutralization of special elements used in an SQL Command ('SQL Injection') vulnerability [CWE-89] in FortiClientEMS may
-            </div>
-
-            <div class="card-footer">
-                <a href="https://wa.me/?text=İncele: https://thehackernews.com/2026/02/fortinet-patches-critical-sqli-flaw.html" target="_blank" class="share-icon" title="WhatsApp">
-                    <i class="fab fa-whatsapp"></i>
-                </a>
-                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://thehackernews.com/2026/02/fortinet-patches-critical-sqli-flaw.html" target="_blank" class="share-icon" title="LinkedIn">
-                    <i class="fab fa-linkedin"></i>
-                </a>
-                <a href="https://twitter.com/intent/tweet?text=Fortinet Patches Critical SQLi Flaw Enabling Unauthenticated Code Execution&url=https://thehackernews.com/2026/02/fortinet-patches-critical-sqli-flaw.html" target="_blank" class="share-icon" title="X / Twitter">
-                    <i class="fa-brands fa-x-twitter"></i>
-                </a>
-                <a href="mailto:?subject=Siber İstihbarat Raporu&body=Bu haberi görmelisin: Fortinet Patches Critical SQLi Flaw Enabling Unauthenticated Code Execution - https://thehackernews.com/2026/02/fortinet-patches-critical-sqli-flaw.html" class="share-icon" title="Email">
-                    <i class="fas fa-envelope"></i>
-                </a>
-            </div>
-        </article>
-        
-        <article class="card" data-source="BleepingComputer">
-            
-            
-            <div class="meta">
-                <span class="source-badge">BleepingComputer</span>
-                <span>13:16</span>
-            </div>
-            
-            <h2><a href="https://www.bleepingcomputer.com/news/microsoft/microsoft-announces-new-mobile-style-windows-security-controls/" target="_blank">Microsoft announces new mobile-style Windows security controls</a></h2>
-            
-            <div class="summary">
-                Microsoft wants to introduce smartphone-style app permission prompts in Windows 11 to request user consent before apps can access sensitive resources such as files, cameras, and microphones. [...]
-            </div>
-
-            <div class="card-footer">
-                <a href="https://wa.me/?text=İncele: https://www.bleepingcomputer.com/news/microsoft/microsoft-announces-new-mobile-style-windows-security-controls/" target="_blank" class="share-icon" title="WhatsApp">
-                    <i class="fab fa-whatsapp"></i>
-                </a>
-                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.bleepingcomputer.com/news/microsoft/microsoft-announces-new-mobile-style-windows-security-controls/" target="_blank" class="share-icon" title="LinkedIn">
-                    <i class="fab fa-linkedin"></i>
-                </a>
-                <a href="https://twitter.com/intent/tweet?text=Microsoft announces new mobile-style Windows security controls&url=https://www.bleepingcomputer.com/news/microsoft/microsoft-announces-new-mobile-style-windows-security-controls/" target="_blank" class="share-icon" title="X / Twitter">
-                    <i class="fa-brands fa-x-twitter"></i>
-                </a>
-                <a href="mailto:?subject=Siber İstihbarat Raporu&body=Bu haberi görmelisin: Microsoft announces new mobile-style Windows security controls - https://www.bleepingcomputer.com/news/microsoft/microsoft-announces-new-mobile-style-windows-security-controls/" class="share-icon" title="Email">
+                <a href="mailto:?subject=Cyber Intelligence Report&body=I thought this might interest you: From Ransomware to Residency: Inside the Rise of the Digital Parasite - https://thehackernews.com/2026/02/from-ransomware-to-residency-inside.html" class="share-icon" title="Send via Email">
                     <i class="fas fa-envelope"></i>
                 </a>
             </div>
@@ -954,7 +870,7 @@ The vulnerability, tracked as CVE-2026-21643, has a CVSS rating of 9.1 out of a 
     </div>
 
     <footer>
-        Developed by <a href="https://github.com/merv3guler" style="color:var(--text-main);text-decoration:none;font-weight:bold;">Merve Güler</a> 
+        Developed by <a href="https://github.com/merv3guler" style="color:var(--text-main);text-decoration:none;font-weight:bold;">Merve Guler</a> 
         <span class="heart">🩷</span>
     </footer>
 </div>
@@ -965,31 +881,34 @@ The vulnerability, tracked as CVE-2026-21643, has a CVSS rating of 9.1 out of a 
     const icon = toggleBtn.querySelector('i');
     const body = document.body;
 
-    // Tercihi Hatırla
     if (localStorage.getItem('theme') === 'light') {
         body.classList.add('light-mode');
         icon.classList.replace('fa-sun', 'fa-moon');
+        icon.style.color = ""; // Reset color for moon
     }
 
     toggleBtn.addEventListener('click', () => {
         body.classList.toggle('light-mode');
         if (body.classList.contains('light-mode')) {
             icon.classList.replace('fa-sun', 'fa-moon');
+            icon.style.color = ""; // Moon color is default text color
             localStorage.setItem('theme', 'light');
         } else {
             icon.classList.replace('fa-moon', 'fa-sun');
+            icon.style.color = "#f39c12"; // Restore Sun color
             localStorage.setItem('theme', 'dark');
         }
     });
 
-    // --- 2. KATEGORİ FİLTRELEME ---
-    // Sayfadaki tüm kaynakları bul ve butonları oluştur
+    // --- 2. FILTERS ---
     const cards = document.querySelectorAll('.card');
     const sources = new Set();
     cards.forEach(card => sources.add(card.getAttribute('data-source')));
 
     const filterContainer = document.getElementById('filterContainer');
-    sources.forEach(source => {
+    
+    // Sort sources alphabetically and create buttons
+    Array.from(sources).sort().forEach(source => {
         const btn = document.createElement('button');
         btn.innerText = source;
         btn.className = 'filter-btn';
@@ -997,32 +916,35 @@ The vulnerability, tracked as CVE-2026-21643, has a CVSS rating of 9.1 out of a 
         filterContainer.appendChild(btn);
     });
 
-    function filterNews(source) {
-        // Aktif buton rengini ayarla
+    function filterNews(criteria) {
         document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        // Find the button that was clicked and add active class (simple check)
         event.target.classList.add('active');
 
-        // Kartları gizle/göster
         cards.forEach(card => {
-            if (source === 'all' || card.getAttribute('data-source') === source) {
+            const source = card.getAttribute('data-source');
+            const isZeroDay = card.getAttribute('data-zeroday') === 'true';
+
+            if (criteria === 'all') {
                 card.style.display = 'flex';
+            } else if (criteria === 'zeroday') {
+                card.style.display = isZeroDay ? 'flex' : 'none';
             } else {
-                card.style.display = 'none';
+                card.style.display = source === criteria ? 'flex' : 'none';
             }
         });
     }
 
-    // --- 3. EXCEL EXPORT ---
+    // --- 3. EXCEL EXPORT (ENGLISH) ---
     function exportToExcel() {
         let csvContent = "data:text/csv;charset=utf-8,";
-        csvContent += "Kaynak,Tarih,Baslik,Link,Ozet\n"; // Başlıklar
+        csvContent += "Source,Date,Title,Link,Summary\n"; // English Headers
 
         cards.forEach(card => {
-            // Sadece görünür olanları indir (Filtreye saygı duy)
             if (card.style.display !== 'none') {
                 const source = card.getAttribute('data-source');
                 const date = card.querySelector('.meta span:last-child').innerText;
-                const title = card.querySelector('h2 a').innerText.replace(/,/g, ''); // Virgülleri temizle
+                const title = card.querySelector('h2 a').innerText.replace(/,/g, '');
                 const link = card.querySelector('h2 a').href;
                 const summary = card.querySelector('.summary').innerText.replace(/\n/g, ' ').replace(/,/g, '');
                 
@@ -1033,7 +955,7 @@ The vulnerability, tracked as CVE-2026-21643, has a CVSS rating of 9.1 out of a 
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
         link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "siber_istihbarat_raporu.csv");
+        link.setAttribute("download", "cyber_intel_report.csv");
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
