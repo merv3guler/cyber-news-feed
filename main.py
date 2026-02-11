@@ -13,22 +13,23 @@ GITHUB_REPO = "https://github.com/merv3guler/cyber-news-feed"
 DATA_FILE = "data/articles.json"
 MAX_HISTORY = 600
 
-# GÜNCELLENMİŞ DEV KAYNAK LİSTESİ
-RSS_FEEDS = [
-    "https://feeds.feedburner.com/TheHackersNews",
-    "https://www.bleepingcomputer.com/feed/",
-    "https://www.cisa.gov/uscert/ncas/alerts.xml",
-    "https://feeds.feedburner.com/GoogleOnlineSecurityBlog",
-    "https://www.theregister.com/security/headlines.atom",
-    "https://isc.sans.edu/rssfeed_full.xml",
-    "https://krebsonsecurity.com/feed/",
-    "https://www.schneier.com/feed/atom/",
-    "https://unit42.paloaltonetworks.com/feed/",
-    "https://blog.trendmicro.com/category/trendlabs-security-intelligence/feed/",
-    "https://www.darkreading.com/rss.xml",
-    "https://threatpost.com/feed/",
-    "https://www.exploit-db.com/rss.xml"
-]
+# KAYNAK YAPILANDIRMASI (İsim: Link)
+# Buradaki isimler butonlarda görünecek
+FEED_CONFIG = {
+    "The Hacker News": "https://feeds.feedburner.com/TheHackersNews",
+    "BleepingComputer": "https://www.bleepingcomputer.com/feed/",
+    "CISA Alerts": "https://www.cisa.gov/uscert/ncas/alerts.xml",
+    "Google Security": "https://feeds.feedburner.com/GoogleOnlineSecurityBlog",
+    "The Register": "https://www.theregister.com/security/headlines.atom",
+    "SANS ISC": "https://isc.sans.edu/rssfeed_full.xml",
+    "Krebs on Security": "https://krebsonsecurity.com/feed/",
+    "Schneier on Security": "https://www.schneier.com/feed/atom/",
+    "Palo Alto Unit 42": "https://unit42.paloaltonetworks.com/feed/",
+    "Trend Micro": "https://blog.trendmicro.com/category/trendlabs-security-intelligence/feed/",
+    "Dark Reading": "https://www.darkreading.com/rss.xml",
+    "Threatpost": "https://threatpost.com/feed/",
+    "Exploit-DB": "https://www.exploit-db.com/rss.xml"
+}
 
 # --- 2. HTML TEMPLATE (Frontend) ---
 HTML_TEMPLATE = """
@@ -153,6 +154,18 @@ HTML_TEMPLATE = """
         .share-icon:hover { color: var(--accent); transform: scale(1.1); }
         .share-icon:hover .fa-x-twitter { color: var(--text-main); }
         
+        /* NO CONTENT MESSAGE */
+        .no-content {
+            display: none; /* Hidden by default */
+            text-align: center;
+            padding: 40px;
+            background: var(--card-bg);
+            border: 1px dashed var(--border);
+            border-radius: 6px;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono';
+        }
+
         /* PAGINATION */
         .pagination { display: flex; justify-content: center; gap: 10px; margin-top: 40px; }
         .page-btn {
@@ -192,11 +205,13 @@ HTML_TEMPLATE = """
 
     <div class="controls-bar">
         <div class="filter-container">
-            <span class="filter-label">FILTERS:</span>
+            <span class="filter-label">SOURCES:</span>
             <button class="filter-btn active" onclick="applyFilter('all')">ALL</button>
             <button class="filter-btn zeroday-btn" onclick="applyFilter('zeroday')">ZERO DAY</button>
             
-            <div id="dynamicSourceFilters" style="display:contents;"></div>
+            {% for source_name in all_sources %}
+            <button class="filter-btn" onclick="applyFilter('{{ source_name }}')">{{ source_name }}</button>
+            {% endfor %}
         </div>
         
         <div style="display:flex; justify-content:flex-end; margin-top:10px;">
@@ -229,6 +244,11 @@ HTML_TEMPLATE = """
             </div>
         </article>
         {% endfor %}
+    </div>
+
+    <div id="noContentMsg" class="no-content">
+        <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 10px; display:block;"></i>
+        No current content available for this source.
     </div>
 
     <div class="pagination" id="paginationControls">
@@ -274,20 +294,7 @@ HTML_TEMPLATE = """
         }
     });
 
-    // --- 2. SOURCE FILTER GENERATION ---
-    const sources = new Set();
-    cards.forEach(card => sources.add(card.getAttribute('data-source')));
-    const sourceContainer = document.getElementById('dynamicSourceFilters');
-    
-    Array.from(sources).sort().forEach(source => {
-        const btn = document.createElement('button');
-        btn.innerText = source;
-        btn.className = 'filter-btn';
-        btn.onclick = () => applyFilter(source);
-        sourceContainer.appendChild(btn);
-    });
-
-    // --- 3. FILTER LOGIC ---
+    // --- 2. FILTER LOGIC ---
     function applyFilter(criteria) {
         document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
         event.target.classList.add('active');
@@ -302,11 +309,23 @@ HTML_TEMPLATE = """
             return false;
         });
 
+        // Show/Hide No Content Message
+        const noContentMsg = document.getElementById('noContentMsg');
+        const grid = document.getElementById('newsGrid');
+        
+        if (filteredCards.length === 0) {
+            noContentMsg.style.display = 'block';
+            grid.style.display = 'none';
+        } else {
+            noContentMsg.style.display = 'none';
+            grid.style.display = 'flex';
+        }
+
         currentPage = 1;
         renderPagination();
     }
 
-    // --- 4. PAGINATION LOGIC ---
+    // --- 3. PAGINATION LOGIC ---
     function renderPagination() {
         const totalPages = Math.ceil(filteredCards.length / itemsPerPage);
         
@@ -322,7 +341,8 @@ HTML_TEMPLATE = """
         document.getElementById('prevBtn').disabled = currentPage === 1;
         document.getElementById('nextBtn').disabled = currentPage >= totalPages;
         
-        document.getElementById('paginationControls').style.display = filteredCards.length > 0 ? 'flex' : 'none';
+        // Hide pagination if no items or fit in one page
+        document.getElementById('paginationControls').style.display = (filteredCards.length > 0 && totalPages > 1) ? 'flex' : 'none';
     }
 
     function changePage(direction) {
@@ -331,7 +351,7 @@ HTML_TEMPLATE = """
         window.scrollTo(0, 0); 
     }
 
-    // --- 5. EXCEL EXPORT ---
+    // --- 4. EXCEL EXPORT ---
     function exportToExcel() {
         let csv = "Source,Date,Title,Link,Summary\\n";
         filteredCards.forEach(card => {
@@ -350,6 +370,7 @@ HTML_TEMPLATE = """
         document.body.removeChild(link);
     }
 
+    // Initial render
     renderPagination();
 
 </script>
@@ -363,7 +384,6 @@ def clean_html(raw_html):
     """Remove HTML tags and cut cleanly."""
     cleanr = re.compile('<.*?>')
     cleantext = re.sub(cleanr, '', raw_html)
-    # Cut at 400 chars but try to keep word boundary
     if len(cleantext) > 400:
         return cleantext[:400].rsplit(' ', 1)[0] + "..."
     return cleantext.strip()
@@ -393,23 +413,20 @@ def fetch_rss_feeds():
     print("[-] Scanning RSS Feeds...")
     zeroday_keywords = ['0-day', 'zero-day', 'zero day', 'exploit', 'cve-', 'critical', 'vulnerability']
 
-    for url in RSS_FEEDS:
+    for name, url in FEED_CONFIG.items():
         try:
             feed = feedparser.parse(url)
-            # Safe get for source title
-            source_name = feed.feed.get('title', 'Unknown Source')[:20]
+            # Use OUR name from config, not the feed's name
+            source_name = name 
 
             for entry in feed.entries:
-                # Parse date
                 if hasattr(entry, 'published_parsed'):
                     pub_date = datetime(*entry.published_parsed[:6], tzinfo=pytz.utc)
                 else:
                     continue
                 
-                # Filter by last 24h
                 if pub_date > time_limit:
                     title = entry.title
-                    # Get summary and clean HTML
                     raw_summary = entry.get('summary', entry.get('description', ''))
                     clean_summary = clean_html(raw_summary)
                     
@@ -420,14 +437,14 @@ def fetch_rss_feeds():
                         "title": title,
                         "link": entry.link,
                         "raw_summary": clean_summary,
-                        "summary": "", # To be filled by AI
+                        "summary": "", 
                         "date": pub_date.strftime("%Y-%m-%d %H:%M"),
                         "timestamp": pub_date.isoformat(),
                         "is_zeroday": is_zeroday,
                         "processed": False
                     })
         except Exception as e:
-            print(f"[!] Error processing {url}: {e}")
+            print(f"[!] Error processing {name}: {e}")
             
     return articles
 
@@ -451,7 +468,6 @@ def process_ai_summaries(new_articles):
             try:
                 print(f"    [{count}/{total}] Summarizing: {article['title'][:30]}...")
                 context = "CRITICAL VULNERABILITY! " if article['is_zeroday'] else ""
-                # Explicitly ask for full sentences
                 prompt = (f"{context}Summarize this cybersecurity news in English. "
                           f"Provide exactly one complete, technical paragraph. Do not cut off sentences. "
                           f"Max 50 words. News: {article['title']} - {article['raw_summary']}")
@@ -460,52 +476,40 @@ def process_ai_summaries(new_articles):
                 article['summary'] = response.text
                 article['processed'] = True
                 
-                # --- SAFETY DELAY: 20 SECONDS ---
                 time.sleep(20) 
                 
             except Exception as e:
                 print(f"    [!] AI Error: {e}")
-                article['summary'] = article['raw_summary'] # Fallback
+                article['summary'] = article['raw_summary'] 
             
     return new_articles
 
 def main():
-    # 1. Load History
     history = load_history()
     history_links = {item['link'] for item in history}
 
-    # 2. Fetch Fresh News
     fresh_news = fetch_rss_feeds()
     
-    # 3. Filter Duplicates
     new_unique_news = [item for item in fresh_news if item['link'] not in history_links]
     
     if new_unique_news:
         print(f"[*] Found {len(new_unique_news)} new unique articles.")
-        
-        # 4. AI Processing
         processed_news = process_ai_summaries(new_unique_news)
-        
-        # 5. Merge and Sort
         full_list = processed_news + history
         full_list.sort(key=lambda x: x['timestamp'], reverse=True)
-        
-        # 6. Trim History (Keep last 600)
         full_list = full_list[:MAX_HISTORY]
-        
-        # 7. Save Data
         save_history(full_list)
         print("[*] Database updated.")
     else:
         print("[*] No new articles found. Generating page from history.")
         full_list = history
 
-    # 8. Generate HTML
     template = Template(HTML_TEMPLATE)
     output_html = template.render(
         items=full_list,
         last_updated=datetime.now().strftime("%Y-%m-%d %H:%M UTC"),
-        github_repo=GITHUB_REPO
+        github_repo=GITHUB_REPO,
+        all_sources=list(FEED_CONFIG.keys()) # Pass source names to template
     )
     
     with open("index.html", "w", encoding="utf-8") as f:
